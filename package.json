@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node lib/index.mjs",
     "db:up": "knex migrate:up",
-    "db:rollback": "knex migrate:rollback"
+    "db:rollback": "knex migrate:rollback",
+    "db:create-migration": "knex migrate:make"
   },
   "author": "",
   "license": "ISC",

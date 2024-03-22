@@ -5,8 +5,8 @@
 exports.up = function(knex) {
   return knex.schema
     .createTable('users', function (table) {
-      table.increments('id');
-      table.string('name', 255).notNullable();
+      table.uuid('id', {primaryKey: true}).defaultTo(knex.fn.uuid());
+      table.string('name', 1024).notNullable();
     }) 
 };
 
