@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test mocha ./test/api.mjs",
     "start": "node lib/index.mjs",
-    "db:up": "knex migrate:up",
+    "db:up": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
     "db:create-migration": "knex migrate:make"
   },
@@ -22,5 +22,9 @@
     "knex": "^3.1.0",
     "pg": "^8.11.3",
     "redis": "^4.6.13"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "mocha": "^10.3.0"
   }
 }
