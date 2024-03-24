@@ -14,6 +14,7 @@ const execP = util.promisify(exec);
 process.env.NODE_ENV = 'test';
 
 if (process.env.POSTGRES_HOST) {
+  console.info('got here');
   process.env.PG_CONNECTION_STRING = `postgresql://${process.env.POSTGRES_HOST}:5432/postgres`;
 } else {
   process.env.PG_CONNECTION_STRING = process.env.PG_CONNECTION_STRING ?? 'postgresql://127.0.0.1:5432/happ_test';
