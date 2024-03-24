@@ -1,16 +1,15 @@
-name: ci
+name: test-api
 
 on: [push]
 
 jobs:
-  Test:
+  api:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: happ
           POSTGRES_DB: happ_test
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
@@ -45,5 +44,3 @@ jobs:
 
       - name: Run tests
         run: npm run test
-        env:
-          PG_CONNECTION_STRING: 'postgres://happ@localhost:5432/happ_test'
