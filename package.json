@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
+    "fix": "eslint '**/*.js' '**/*.mjs' --fix",
     "test": "cross-env NODE_ENV=test mocha ./test/api.mjs",
+    "posttest": "eslint '**/*.js' '**/*.mjs'",
     "start": "node lib/index.mjs",
     "db:up": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
     "db:create-migration": "knex migrate:make"
   },
-  "author": "",
+  "author": "Ben Coe <bencoe@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@sentry/node": "^7.108.0",
@@ -25,6 +27,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
     "mocha": "^10.3.0"
   }
 }

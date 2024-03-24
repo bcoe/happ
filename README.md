@@ -4,10 +4,10 @@ A habit tracking application.
 
 ## Local development
 
-## Starting PostgreSQL
+### Starting PostgreSQL
 
 `brew services start postgresql@14`
 
-## Starting Redis
+### Starting Redis
 
 `brew services start redis`
