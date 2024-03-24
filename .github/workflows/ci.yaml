@@ -48,4 +48,4 @@ jobs:
       - name: Run tests
         run: npm run test
         env:
-          PG_CONNECTION_STRING: 'postgresql://postgres:postgres@postgres:5432/postgres'
+          PG_CONNECTION_STRING: 'postgresql://postgres:postgres@127.0.0.1:5432/postgres'
