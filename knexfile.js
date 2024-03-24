@@ -17,9 +17,7 @@ module.exports = {
 
   test: {
     client: 'postgresql',
-    connection: {
-      database: 'happ_test',
-    },
+    connection: process.env.PG_CONNECTION_STRING,
     pool: {
       min: 2,
       max: 10,
@@ -28,11 +26,7 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: {
-      database: process.env.DB,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    },
+    connection: process.env.PG_CONNECTION_STRING,
     pool: {
       min: 2,
       max: 10,

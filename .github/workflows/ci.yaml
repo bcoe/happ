@@ -48,7 +48,4 @@ jobs:
       - name: Run tests
         run: npm run test
         env:
-          # The hostname used to communicate with the PostgreSQL service container
-          POSTGRES_HOST: postgres
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
+          PG_CONNECTION_STRING: 'postgresql://postgres:postgres@postgres:5432/postgres'
