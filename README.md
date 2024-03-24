@@ -2,6 +2,8 @@
 
 A habit tracking application.
 
+...
+
 ## Local development
 
 ### Starting PostgreSQL
