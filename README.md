@@ -2,7 +2,7 @@
 
 A habit tracking application.
 
-...
+.....
 
 ## Local development
 
