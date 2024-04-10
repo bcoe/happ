@@ -24,4 +24,5 @@ module.exports = {
   rules: {
     'import/extensions': 'off',
   },
+  ignorePatterns: ['build/', 'vite.config.mjs'],
 };

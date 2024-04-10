@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema
     .createTable('habits_active_position', (table) => {
       table.uuid('habit_id');
@@ -18,6 +18,6 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = function (knex) {
   return knex.schema.dropTable('habits_active_position');
 };
