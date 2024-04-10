@@ -1,5 +1,6 @@
 import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
+import classes from './style.module.css'
 
 function App() {
   return (
@@ -13,9 +14,13 @@ function App() {
         <Links />
       </head>
       <body>
-        <h1>Hello world!</h1>
+        <div className={classes.grid  + ' ' + classes['grid-cols-2'] + ' ' + classes['gap-4']}>
+          <div className={classes.red}>Hello</div>
+          <div>World</div>
+          <div>Goodnight</div>
+          <div>Moon</div>
+        </div>
         <Outlet />
-
         <Scripts />
       </body>
     </html>
