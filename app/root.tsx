@@ -1,8 +1,24 @@
-import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
-import classes from './style.module.css'
+import { useEffect, useState } from 'react';
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  useRouteError,
+} from "@remix-run/react";
+
+// import classes from './style.module.css'
 
 function App() {
+  const [count, setCount] = useState(0);
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    // Update the document title using the browser API
+    document.title = `You clicked ${count} times`;
+  });
+
   return (
     <html>
       <head>
@@ -14,17 +30,16 @@ function App() {
         <Links />
       </head>
       <body>
-        <div className={classes.grid  + ' ' + classes['grid-cols-2'] + ' ' + classes['gap-4']}>
-          <div className={classes.red}>Hello</div>
-          <div>World</div>
-          <div>Goodnight</div>
-          <div>Moon</div>
-        </div>
+        <h1>Hello world!</h1>
         <Outlet />
+          <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
         <Scripts />
       </body>
     </html>
-  );
+  )
 }
 
 export const ErrorBoundary = () => {
@@ -34,3 +49,4 @@ export const ErrorBoundary = () => {
 };
 
 export default withSentry(App);
+

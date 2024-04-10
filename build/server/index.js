@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "0c64ab80-c4a3-42fd-b902-5ff4d3108a1f", e._sentryDebugIdIdentifier = "sentry-dbid-0c64ab80-c4a3-42fd-b902-5ff4d3108a1f");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "352e4c79-7f11-4b1c-9d21-0fecbe18334f", e._sentryDebugIdIdentifier = "sentry-dbid-352e4c79-7f11-4b1c-9d21-0fecbe18334f");
   } catch (e2) {
   }
 }();
@@ -13,6 +13,7 @@ import { RemixServer, Meta, Links, Outlet, Scripts, useRouteError } from "@remix
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
+import { useState, useEffect } from "react";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
@@ -123,21 +124,13 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const flex = "_flex_qs33a_1";
-const grid = "_grid_qs33a_1";
-const border = "_border_qs33a_1";
-const red = "_red_qs33a_5";
-const classes = {
-  flex,
-  grid,
-  "grid-cols-2": "_grid-cols-2_qs33a_1",
-  "gap-4": "_gap-4_qs33a_1",
-  border,
-  red
-};
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "5b4d0443b8c49486fac555e1421c1ca7d62990bc" };
+_global.SENTRY_RELEASE = { id: "d5467acacc4ac95f306fd5886e3aea4117c83251" };
 function App() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsxs("head", { children: [
       /* @__PURE__ */ jsx(
@@ -151,13 +144,14 @@ function App() {
       /* @__PURE__ */ jsx(Links, {})
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
-      /* @__PURE__ */ jsxs("div", { className: classes.grid + " " + classes["grid-cols-2"] + " " + classes["gap-4"], children: [
-        /* @__PURE__ */ jsx("div", { className: classes.red, children: "Hello" }),
-        /* @__PURE__ */ jsx("div", { children: "World" }),
-        /* @__PURE__ */ jsx("div", { children: "Goodnight" }),
-        /* @__PURE__ */ jsx("div", { children: "Moon" })
-      ] }),
+      /* @__PURE__ */ jsx("h1", { children: "Hello world!" }),
       /* @__PURE__ */ jsx(Outlet, {}),
+      /* @__PURE__ */ jsxs("p", { children: [
+        "You clicked ",
+        count,
+        " times"
+      ] }),
+      /* @__PURE__ */ jsx("button", { onClick: () => setCount(count + 1), children: "Click me" }),
       /* @__PURE__ */ jsx(Scripts, {})
     ] })
   ] });
@@ -242,7 +236,7 @@ const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: SentryExamplePage
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-C0XkGrIg.js", "imports": ["/assets/jsx-runtime-B7D1OI9o.js", "/assets/performance-zG4ZgcbI.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-WmQETsoC.js", "imports": ["/assets/jsx-runtime-B7D1OI9o.js", "/assets/performance-zG4ZgcbI.js"], "css": ["/assets/root-BoVzlXBv.css"] }, "routes/sentry-example-page": { "id": "routes/sentry-example-page", "parentId": "root", "path": "sentry-example-page", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/sentry-example-page-1to5oMbg.js", "imports": ["/assets/jsx-runtime-B7D1OI9o.js"], "css": [] } }, "url": "/assets/manifest-39ae8410.js", "version": "39ae8410" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BQjaP0Yj.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js", "/assets/performance-BfGe--co.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-DlGOwh56.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js", "/assets/performance-BfGe--co.js"], "css": [] }, "routes/sentry-example-page": { "id": "routes/sentry-example-page", "parentId": "root", "path": "sentry-example-page", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/sentry-example-page-DWjFGF0S.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js"], "css": [] } }, "url": "/assets/manifest-9b3bd69a.js", "version": "9b3bd69a" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
