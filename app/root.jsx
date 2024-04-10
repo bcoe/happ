@@ -1,28 +1,5 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  useLocation,
-  useMatches,
-} from "@remix-run/react";
-
-import { withSentry } from "@sentry/remix";
-import * as Sentry from '@sentry/remix';
-import { useEffect } from 'react';
-
-Sentry.init({
-  dsn: 'https://9736cd89fad569a4016ba7ce0d2a79c0@o4506956365430784.ingest.us.sentry.io/4507062370107392',
-  tracesSampleRate: 1,
-  // debug: true,
-  integrations: [
-    Sentry.browserTracingIntegration({
-      useEffect,
-      useLocation,
-      useMatches,
-    }),
-  ]
-});
+import { Links, Meta, Outlet, Scripts, useRouteError } from "@remix-run/react";
+import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 
 function App() {
   return (
@@ -44,5 +21,11 @@ function App() {
     </html>
   );
 }
+
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+  captureRemixErrorBoundaryError(error);
+  return <div>Something went wrong</div>;
+};
 
 export default withSentry(App);
