@@ -1,10 +1,12 @@
 import { jsx, jsxs } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
 import { createReadableStreamFromReadable } from "@remix-run/node";
-import { RemixServer, Meta, Links, Outlet, Scripts } from "@remix-run/react";
+import { RemixServer, useLocation, useMatches, Meta, Links, Outlet, Scripts } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import * as Sentry from "@sentry/remix";
 import { withSentry } from "@sentry/remix";
+import { useEffect } from "react";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
@@ -115,6 +117,18 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
+Sentry.init({
+  dsn: "https://9736cd89fad569a4016ba7ce0d2a79c0@o4506956365430784.ingest.us.sentry.io/4507062370107392",
+  tracesSampleRate: 1,
+  // debug: true,
+  integrations: [
+    Sentry.browserTracingIntegration({
+      useEffect,
+      useLocation,
+      useMatches
+    })
+  ]
+});
 function App() {
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsxs("head", { children: [
@@ -140,7 +154,7 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: root
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-C-DgVwca.js", "imports": ["/assets/performance-DWHxMUNt.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-Bva9n4HO.js", "imports": ["/assets/performance-DWHxMUNt.js"], "css": [] } }, "url": "/assets/manifest-5b3cbcad.js", "version": "5b3cbcad" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DcjSYiku.js", "imports": ["/assets/components-CCHHp7fl.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-BsPQ_Kw3.js", "imports": ["/assets/components-CCHHp7fl.js"], "css": [] } }, "url": "/assets/manifest-850e321c.js", "version": "850e321c" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
