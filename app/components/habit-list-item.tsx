@@ -3,7 +3,7 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { RxDragHandleHorizontal } from "react-icons/rx";
 
-export function SortableItem(props) {
+export function HabitListItem(props) {
   const {
     attributes,
     listeners,

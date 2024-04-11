@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "e777ef9c-60ed-4621-8ea3-e3e787b4eea5", e._sentryDebugIdIdentifier = "sentry-dbid-e777ef9c-60ed-4621-8ea3-e3e787b4eea5");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "0b09754f-f668-4f63-89c0-4550645b0a7e", e._sentryDebugIdIdentifier = "sentry-dbid-0b09754f-f668-4f63-89c0-4550645b0a7e");
   } catch (e2) {
   }
 }();
@@ -13,7 +13,7 @@ import { RemixServer, Links, Meta, Link, Outlet, Scripts, useRouteError } from "
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSensors, useSensor, PointerSensor, TouchSensor, KeyboardSensor, DndContext, closestCenter } from "@dnd-kit/core";
 import { useSortable, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -130,7 +130,7 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
 }, Symbol.toStringTag, { value: "Module" }));
 const styles = "/assets/shared-DTRQ3TiZ.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "6683a18f3db6920e6524b13c73339cb186f57315" };
+_global.SENTRY_RELEASE = { id: "ac5911b3e8ee33cbb0350e9a5c105410cbf23ebd" };
 const links = () => [
   { rel: "stylesheet", href: styles }
 ];
@@ -170,7 +170,7 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: root,
   links
 }, Symbol.toStringTag, { value: "Module" }));
-function SortableItem(props) {
+function HabitListItem(props) {
   const {
     attributes,
     listeners,
@@ -188,7 +188,11 @@ function SortableItem(props) {
     /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "checkbox" }) })
   ] }) });
 }
-function Habits() {
+function HabitList() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
   const [items, setItems] = useState([{ id: 1, value: "make coffee" }, { id: 2, value: "brush my teeth" }, { id: 3, value: "be rad" }, { id: 4, value: "go climb a mountain" }]);
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -197,7 +201,7 @@ function Habits() {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-  return /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsx("div", { className: "remix__page", children: mounted ? /* @__PURE__ */ jsx(
     DndContext,
     {
       sensors,
@@ -208,11 +212,11 @@ function Habits() {
         {
           items,
           strategy: verticalListSortingStrategy,
-          children: items.map((item) => /* @__PURE__ */ jsx(SortableItem, { value: item.value, id: item.id }, item.id))
+          children: items.map((item) => /* @__PURE__ */ jsx(HabitListItem, { value: item.value, id: item.id }, item.id))
         }
       )
     }
-  );
+  ) : null });
   function handleDragEnd(event) {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -224,12 +228,15 @@ function Habits() {
     }
   }
 }
+function Habits() {
+  return /* @__PURE__ */ jsx(HabitList, {});
+}
 const habits = withSentry(Habits);
 const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: habits
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-DWbPNiWm.js", "imports": ["/assets/performance-DjHs9NOR.js", "/assets/components-fmCU8v2d.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-DZ79a9T2.js", "imports": ["/assets/performance-DjHs9NOR.js", "/assets/components-fmCU8v2d.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-BH2YLc7_.js", "imports": ["/assets/performance-DjHs9NOR.js"], "css": [] } }, "url": "/assets/manifest-505768ee.js", "version": "505768ee" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-B8IY0NQ5.js", "imports": ["/assets/performance-D0ZPiMOo.js", "/assets/components-C1LYFeEj.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BhzfNCXt.js", "imports": ["/assets/performance-D0ZPiMOo.js", "/assets/components-C1LYFeEj.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-C6S4qR36.js", "imports": ["/assets/performance-D0ZPiMOo.js"], "css": [] } }, "url": "/assets/manifest-4f1d1747.js", "version": "4f1d1747" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
