@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.header {
+  height: 50px;
+  background-color: rgb(250, 250, 250);
+  margin-bottom: 8px;
+  text-align: right;
+  padding-top: 10px;
+  padding-right: 5%;
+}
