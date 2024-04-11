@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [
     remix({
-      ssr: false,
+    //  ssr: false,
     }),
     sentryVitePlugin({
       org: "daily-habits-ben-coe-test-orga",
