@@ -14,6 +14,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -30,6 +31,7 @@ function App() {
   const [items, setItems] = useState([{id: 1, value: 'make coffee'}, {id: 2, value: 'brush my teeth'}, {id: 3, value: 'be rad'}, {id: 4, value: 'go climb a mountain'}]);
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

@@ -18,7 +18,7 @@ export function SortableItem(props) {
     transition,
   };
   return (
-    <div className={ttt('bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow')} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div className={ttt('bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow')} ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <div className={ttt('grid grid-cols-12')}>
         <div>
           <RxDragHandleHorizontal />
