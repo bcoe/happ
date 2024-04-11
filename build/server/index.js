@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "0b09754f-f668-4f63-89c0-4550645b0a7e", e._sentryDebugIdIdentifier = "sentry-dbid-0b09754f-f668-4f63-89c0-4550645b0a7e");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "98beaa69-5425-4863-ae38-8cb050620f9d", e._sentryDebugIdIdentifier = "sentry-dbid-98beaa69-5425-4863-ae38-8cb050620f9d");
   } catch (e2) {
   }
 }();
@@ -130,7 +130,7 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
 }, Symbol.toStringTag, { value: "Module" }));
 const styles = "/assets/shared-DTRQ3TiZ.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "ac5911b3e8ee33cbb0350e9a5c105410cbf23ebd" };
+_global.SENTRY_RELEASE = { id: "6fcb9805d575785dd06ccc350d7240b382e5b9e4" };
 const links = () => [
   { rel: "stylesheet", href: styles }
 ];
@@ -236,7 +236,7 @@ const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: habits
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-B8IY0NQ5.js", "imports": ["/assets/performance-D0ZPiMOo.js", "/assets/components-C1LYFeEj.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BhzfNCXt.js", "imports": ["/assets/performance-D0ZPiMOo.js", "/assets/components-C1LYFeEj.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-C6S4qR36.js", "imports": ["/assets/performance-D0ZPiMOo.js"], "css": [] } }, "url": "/assets/manifest-4f1d1747.js", "version": "4f1d1747" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-CLiefOeC.js", "imports": ["/assets/performance-Durkhqs0.js", "/assets/components-HKQAPtmd.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-0GOHWKrG.js", "imports": ["/assets/performance-Durkhqs0.js", "/assets/components-HKQAPtmd.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-uMucPjnv.js", "imports": ["/assets/performance-Durkhqs0.js"], "css": [] } }, "url": "/assets/manifest-ca08142d.js", "version": "ca08142d" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
