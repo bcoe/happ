@@ -17,6 +17,8 @@
   "author": "Ben Coe <bencoe@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/sortable": "^8.0.0",
     "@remix-run/express": "^2.8.1",
     "@remix-run/node": "^2.8.1",
     "@remix-run/react": "^2.8.1",
@@ -34,6 +36,7 @@
     "pg": "^8.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
     "redis": "^4.6.13",
     "remix": "^2.8.1",
     "vite": "^5.2.8"

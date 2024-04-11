@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-.red {
-  color: red;
+.header {
+  height: 50px;
+  background-color: rgb(250, 250, 250);
+  margin-bottom: 8px;
 }

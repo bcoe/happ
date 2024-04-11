@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "352e4c79-7f11-4b1c-9d21-0fecbe18334f", e._sentryDebugIdIdentifier = "sentry-dbid-352e4c79-7f11-4b1c-9d21-0fecbe18334f");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "54147d72-af28-4233-9808-0d12da712b20", e._sentryDebugIdIdentifier = "sentry-dbid-54147d72-af28-4233-9808-0d12da712b20");
   } catch (e2) {
   }
 }();
@@ -13,7 +13,11 @@ import { RemixServer, Meta, Links, Outlet, Scripts, useRouteError } from "@remix
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSensors, useSensor, PointerSensor, KeyboardSensor, DndContext, closestCenter } from "@dnd-kit/core";
+import { useSortable, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { RxDragHandleHorizontal } from "react-icons/rx";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
@@ -124,13 +128,63 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
+const grid = "_grid_1nq7q_1";
+const transform = "_transform_1nq7q_1";
+const rounded = "_rounded_1nq7q_1";
+const border = "_border_1nq7q_1";
+const shadow = "_shadow_1nq7q_1";
+const transition = "_transition_1nq7q_1";
+const header = "_header_1nq7q_5";
+const classes = {
+  "col-span-10": "_col-span-10_1nq7q_1",
+  grid,
+  transform,
+  "grid-cols-12": "_grid-cols-12_1nq7q_1",
+  "grid-cols-3": "_grid-cols-3_1nq7q_1",
+  rounded,
+  border,
+  "border-gray-400": "_border-gray-400_1nq7q_1",
+  "bg-white": "_bg-white_1nq7q_1",
+  "px-4": "_px-4_1nq7q_1",
+  "py-2": "_py-2_1nq7q_1",
+  "font-semibold": "_font-semibold_1nq7q_1",
+  "text-gray-800": "_text-gray-800_1nq7q_1",
+  shadow,
+  transition,
+  header,
+  "hover:bg-gray-100": "_hover:bg-gray-100_1nq7q_1"
+};
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "d5467acacc4ac95f306fd5886e3aea4117c83251" };
+_global.SENTRY_RELEASE = { id: "635f0775f8583d8e528459daf65299ebb5be7035" };
+function ttt(text) {
+  return text.split(" ").map((text2) => classes[text2]).join(" ");
+}
+function SortableItem(props) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform: transform2,
+    transition: transition2
+  } = useSortable({ id: props.id });
+  const style = {
+    transform: CSS.Transform.toString(transform2),
+    transition: transition2
+  };
+  return /* @__PURE__ */ jsx("div", { className: ttt("bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"), ref: setNodeRef, style, ...attributes, ...listeners, children: /* @__PURE__ */ jsxs("div", { className: ttt("grid grid-cols-12"), children: [
+    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(RxDragHandleHorizontal, {}) }),
+    /* @__PURE__ */ jsx("div", { className: ttt("col-span-10"), children: props.value }),
+    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "checkbox" }) })
+  ] }) });
+}
 function App() {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    document.title = `You clicked ${count} times`;
-  });
+  const [items, setItems] = useState([{ id: 1, value: "make coffee" }, { id: 2, value: "brush my teeth" }, { id: 3, value: "be rad" }, { id: 4, value: "go climb a mountain" }]);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsxs("head", { children: [
       /* @__PURE__ */ jsx(
@@ -144,17 +198,41 @@ function App() {
       /* @__PURE__ */ jsx(Links, {})
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
-      /* @__PURE__ */ jsx("h1", { children: "Hello world!" }),
       /* @__PURE__ */ jsx(Outlet, {}),
-      /* @__PURE__ */ jsxs("p", { children: [
-        "You clicked ",
-        count,
-        " times"
+      /* @__PURE__ */ jsx("div", { className: ttt("header") }),
+      /* @__PURE__ */ jsxs("div", { className: ttt("grid grid-cols-3"), children: [
+        /* @__PURE__ */ jsx("div", {}),
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(
+          DndContext,
+          {
+            sensors,
+            collisionDetection: closestCenter,
+            onDragEnd: handleDragEnd,
+            children: /* @__PURE__ */ jsx(
+              SortableContext,
+              {
+                items,
+                strategy: verticalListSortingStrategy,
+                children: items.map((item) => /* @__PURE__ */ jsx(SortableItem, { value: item.value, id: item.id }, item.id))
+              }
+            )
+          }
+        ) }),
+        /* @__PURE__ */ jsx("div", {})
       ] }),
-      /* @__PURE__ */ jsx("button", { onClick: () => setCount(count + 1), children: "Click me" }),
       /* @__PURE__ */ jsx(Scripts, {})
     ] })
   ] });
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setItems((items2) => {
+        const oldIndex = items2.findIndex((item) => item.id === active.id);
+        const newIndex = items2.findIndex((item) => item.id === over.id);
+        return arrayMove(items2, oldIndex, newIndex);
+      });
+    }
+  }
 }
 const ErrorBoundary = () => {
   const error = useRouteError();
@@ -167,76 +245,7 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   ErrorBoundary,
   default: root
 }, Symbol.toStringTag, { value: "Module" }));
-function SentryExamplePage() {
-  return /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs(
-    "main",
-    {
-      style: {
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center"
-      },
-      children: [
-        /* @__PURE__ */ jsx("h1", { style: { fontSize: "4rem", margin: "14px 0" }, children: /* @__PURE__ */ jsx(
-          "svg",
-          {
-            style: {
-              height: "1em"
-            },
-            xmlns: "http://www.w3.org/2000/svg",
-            viewBox: "0 0 200 44",
-            children: /* @__PURE__ */ jsx(
-              "path",
-              {
-                fill: "currentColor",
-                d: "M124.32,28.28,109.56,9.22h-3.68V34.77h3.73V15.19l15.18,19.58h3.26V9.22h-3.73ZM87.15,23.54h13.23V20.22H87.14V12.53h14.93V9.21H83.34V34.77h18.92V31.45H87.14ZM71.59,20.3h0C66.44,19.06,65,18.08,65,15.7c0-2.14,1.89-3.59,4.71-3.59a12.06,12.06,0,0,1,7.07,2.55l2-2.83a14.1,14.1,0,0,0-9-3c-5.06,0-8.59,3-8.59,7.27,0,4.6,3,6.19,8.46,7.52C74.51,24.74,76,25.78,76,28.11s-2,3.77-5.09,3.77a12.34,12.34,0,0,1-8.3-3.26l-2.25,2.69a15.94,15.94,0,0,0,10.42,3.85c5.48,0,9-2.95,9-7.51C79.75,23.79,77.47,21.72,71.59,20.3ZM195.7,9.22l-7.69,12-7.64-12h-4.46L186,24.67V34.78h3.84V24.55L200,9.22Zm-64.63,3.46h8.37v22.1h3.84V12.68h8.37V9.22H131.08ZM169.41,24.8c3.86-1.07,6-3.77,6-7.63,0-4.91-3.59-8-9.38-8H154.67V34.76h3.8V25.58h6.45l6.48,9.2h4.44l-7-9.82Zm-10.95-2.5V12.6h7.17c3.74,0,5.88,1.77,5.88,4.84s-2.29,4.86-5.84,4.86Z M29,2.26a4.67,4.67,0,0,0-8,0L14.42,13.53A32.21,32.21,0,0,1,32.17,40.19H27.55A27.68,27.68,0,0,0,12.09,17.47L6,28a15.92,15.92,0,0,1,9.23,12.17H4.62A.76.76,0,0,1,4,39.06l2.94-5a10.74,10.74,0,0,0-3.36-1.9l-2.91,5a4.54,4.54,0,0,0,1.69,6.24A4.66,4.66,0,0,0,4.62,44H19.15a19.4,19.4,0,0,0-8-17.31l2.31-4A23.87,23.87,0,0,1,23.76,44H36.07a35.88,35.88,0,0,0-16.41-31.8l4.67-8a.77.77,0,0,1,1.05-.27c.53.29,20.29,34.77,20.66,35.17a.76.76,0,0,1-.68,1.13H40.6q.09,1.91,0,3.81h4.78A4.59,4.59,0,0,0,50,39.43a4.49,4.49,0,0,0-.62-2.28Z"
-              }
-            )
-          }
-        ) }),
-        /* @__PURE__ */ jsx("p", { children: "Get started by sending us a sample error:" }),
-        /* @__PURE__ */ jsx(
-          "button",
-          {
-            type: "button",
-            style: {
-              padding: "12px",
-              cursor: "pointer",
-              backgroundColor: "#AD6CAA",
-              borderRadius: "4px",
-              border: "none",
-              color: "white",
-              fontSize: "14px",
-              margin: "18px"
-            },
-            onClick: () => {
-              throw new Error("Sentry Example Frontend Error");
-            },
-            children: "Throw error!"
-          }
-        ),
-        /* @__PURE__ */ jsxs("p", { children: [
-          "Next, look for the error on the",
-          " ",
-          /* @__PURE__ */ jsx("a", { href: "https://daily-habits-ben-coe-test-orga.sentry.io/issues/?project=4507062370107392", children: "Issues Page" }),
-          "."
-        ] }),
-        /* @__PURE__ */ jsxs("p", { style: { marginTop: "24px" }, children: [
-          "For more information, see",
-          " ",
-          /* @__PURE__ */ jsx("a", { href: "https://docs.sentry.io/platforms/javascript/guides/remix/", children: "https://docs.sentry.io/platforms/javascript/guides/remix/" })
-        ] })
-      ]
-    }
-  ) });
-}
-const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  default: SentryExamplePage
-}, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-BQjaP0Yj.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js", "/assets/performance-BfGe--co.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-DlGOwh56.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js", "/assets/performance-BfGe--co.js"], "css": [] }, "routes/sentry-example-page": { "id": "routes/sentry-example-page", "parentId": "root", "path": "sentry-example-page", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/sentry-example-page-DWjFGF0S.js", "imports": ["/assets/jsx-runtime-B4tiieZH.js"], "css": [] } }, "url": "/assets/manifest-9b3bd69a.js", "version": "9b3bd69a" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BBr2LwHM.js", "imports": ["/assets/performance-DtqhxpOn.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-C_MOzUfD.js", "imports": ["/assets/performance-DtqhxpOn.js"], "css": ["/assets/root-CQgxjUUW.css"] } }, "url": "/assets/manifest-885a1d32.js", "version": "885a1d32" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
@@ -252,14 +261,6 @@ const routes = {
     index: void 0,
     caseSensitive: void 0,
     module: route0
-  },
-  "routes/sentry-example-page": {
-    id: "routes/sentry-example-page",
-    parentId: "root",
-    path: "sentry-example-page",
-    index: void 0,
-    caseSensitive: void 0,
-    module: route1
   }
 };
 export {
