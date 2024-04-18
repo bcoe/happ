@@ -7,9 +7,9 @@ import {
   Scripts,
   useRouteError,
 } from "@remix-run/react";
-// import { ttt } from './helpers/text-to-tailwind';
 import type { LinksFunction } from "@remix-run/node";
 import styles from "./styles/shared.css?url";
+import {HabitsProvider} from './providers/habits';
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -27,12 +27,21 @@ function App() {
       </head>
       <body>
         <div className={'header'}>
-          <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
+          <div className={'grid grid-cols-10'}>
+            <div>
+              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
+            </div>
+            <div>
+              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
+            </div>
+          </div>
         </div>
         <div className={'grid grid-cols-3'}>
           <div />
           <div>
-            <Outlet />
+            <HabitsProvider>
+              <Outlet />
+            </HabitsProvider>
           </div>
           <div />
         </div>

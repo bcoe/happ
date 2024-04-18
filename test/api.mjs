@@ -44,7 +44,7 @@ describe('api', () => {
       }
     }
   });
-  describe('POST /habits', () => {
+  describe('POST /v1/habits', () => {
     it('returns 422 status if name not set', async () => {
       /// Mock the session middleware as though there's a logged in user.
       const { id } = (await api.getDatabase()('users').insert({ name: 'fake-bcoe' }, ['id']))[0];
@@ -52,7 +52,7 @@ describe('api', () => {
         req.userId = id;
         return next();
       };
-      const resp = await fetch(`${SERVER}/habits`, {
+      const resp = await fetch(`${SERVER}/v1/habits`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ describe('api', () => {
         req.userId = id;
         return next();
       };
-      const resp = await fetch(`${SERVER}/habits`, {
+      const resp = await fetch(`${SERVER}/v1/habits`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -23,7 +23,7 @@ export function HabitListItem(props) {
           <RxDragHandleHorizontal />
         </div>
         <div className={'col-span-10'}>
-          {props.value}
+          {props.name}
         </div>
         <div>
           <input type="checkbox" />

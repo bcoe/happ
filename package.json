@@ -7,7 +7,8 @@
   "scripts": {
     "build": "remix vite:build",
     "fix": "eslint '**/*.mjs' '**/*.cjs' --fix",
-    "test": "cross-env NODE_ENV=test mocha ./test/api.mjs",
+    "test": "cross-env NODE_ENV=test mocha ./test/api.mjs && npm run test:frontend",
+    "test:frontend": "vitest --run ./app",
     "posttest": "eslint '**/*.mjs' '**/*.cjs'",
     "start": "node lib/index.mjs",
     "db:up": "knex migrate:latest --knexfile=knexfile.cjs",
@@ -28,9 +29,11 @@
     "@sentry/vite-plugin": "^2.16.1",
     "@sentry/wizard": "^3.22.0",
     "connect-redis": "^7.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "google-auth-library": "^9.7.0",
     "isbot": "^4.4.0",
     "knex": "^3.1.0",
     "pg": "^8.11.3",
@@ -44,13 +47,19 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.8.1",
+    "@remix-run/testing": "^2.8.1",
+    "@testing-library/react": "^15.0.2",
+    "@types/react": "^18.2.77",
+    "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
+    "jsdom": "^24.0.0",
     "mocha": "^10.3.0",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "vitest": "^1.5.0"
   }
 }

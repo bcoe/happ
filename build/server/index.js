@@ -2,22 +2,24 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "98beaa69-5425-4863-ae38-8cb050620f9d", e._sentryDebugIdIdentifier = "sentry-dbid-98beaa69-5425-4863-ae38-8cb050620f9d");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "5b6b3737-3a41-4a6f-b98b-3e6b1453741a", e._sentryDebugIdIdentifier = "sentry-dbid-5b6b3737-3a41-4a6f-b98b-3e6b1453741a");
   } catch (e2) {
   }
 }();
 import { jsx, jsxs } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
 import { createReadableStreamFromReadable } from "@remix-run/node";
-import { RemixServer, Links, Meta, Link, Outlet, Scripts, useRouteError } from "@remix-run/react";
+import { RemixServer, Links, Meta, Link, Outlet, Scripts, useRouteError, Await } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
-import React, { useState } from "react";
+import * as React from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSensors, useSensor, PointerSensor, TouchSensor, KeyboardSensor, DndContext, closestCenter } from "@dnd-kit/core";
 import { useSortable, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { RxDragHandleHorizontal } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
@@ -128,9 +130,41 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-DTRQ3TiZ.css";
+const styles = "/assets/shared-DByhrGWj.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "6fcb9805d575785dd06ccc350d7240b382e5b9e4" };
+_global.SENTRY_RELEASE = { id: "f33cc3be66110bdccd95a1a4edf93a53b8178aff" };
+const HabitsContext = React.createContext(null);
+const HABITS = [
+  {
+    id: "abc123",
+    name: "Make my morning coffee"
+  },
+  {
+    id: "qwerty",
+    name: "Take Finn for a walk"
+  }
+];
+function HabitsProvider({ children }) {
+  const [habits, setHabits] = React.useState([]);
+  const set = (habits2) => {
+    setHabits([...habits2]);
+    return {};
+  };
+  const create = async (type) => {
+  };
+  const remove = async (prefix, created) => {
+  };
+  const load = async () => {
+    const resp = await fetch("/v1/habits");
+    console.info(await resp.json());
+    set(HABITS);
+  };
+  const value = { habits, load, set, create, remove };
+  return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, children });
+}
+function useHabits() {
+  return React.useContext(HabitsContext);
+}
 const links = () => [
   { rel: "stylesheet", href: styles }
 ];
@@ -148,10 +182,13 @@ function App() {
       /* @__PURE__ */ jsx(Meta, {})
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
-      /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
+      /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-10", children: [
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
+      ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-3", children: [
         /* @__PURE__ */ jsx("div", {}),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Outlet, {}) }),
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(HabitsProvider, { children: /* @__PURE__ */ jsx(Outlet, {}) }) }),
         /* @__PURE__ */ jsx("div", {})
       ] }),
       /* @__PURE__ */ jsx(Scripts, {})
@@ -170,6 +207,10 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: root,
   links
 }, Symbol.toStringTag, { value: "Module" }));
+async function requireUserId(request) {
+  const userId = "bcoe";
+  return userId;
+}
 function HabitListItem(props) {
   const {
     attributes,
@@ -184,16 +225,17 @@ function HabitListItem(props) {
   };
   return /* @__PURE__ */ jsx("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item", ref: setNodeRef, style, ...attributes, ...listeners, children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-12", children: [
     /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(RxDragHandleHorizontal, {}) }),
-    /* @__PURE__ */ jsx("div", { className: "col-span-10", children: props.value }),
+    /* @__PURE__ */ jsx("div", { className: "col-span-10", children: props.name }),
     /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "checkbox" }) })
   ] }) });
 }
-function HabitList() {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-  const [items, setItems] = useState([{ id: 1, value: "make coffee" }, { id: 2, value: "brush my teeth" }, { id: 3, value: "be rad" }, { id: 4, value: "go climb a mountain" }]);
+async function loader({ request }) {
+  await requireUserId();
+  return {};
+}
+function Habits() {
+  const habits = useHabits();
+  const [initialLoad, setInitialLoad] = useState(true);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -201,7 +243,13 @@ function HabitList() {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-  return /* @__PURE__ */ jsx("div", { className: "remix__page", children: mounted ? /* @__PURE__ */ jsx(
+  useEffect(() => {
+    if (!initialLoad)
+      return;
+    setInitialLoad(false);
+    habits.load();
+  }, [initialLoad, habits]);
+  return /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx("div", { children: "Beep Boop I AM CONTENT" }), children: /* @__PURE__ */ jsx(Await, { resolve: habits, children: /* @__PURE__ */ jsx(
     DndContext,
     {
       sensors,
@@ -210,33 +258,42 @@ function HabitList() {
       children: /* @__PURE__ */ jsx(
         SortableContext,
         {
-          items,
+          items: habits.habits,
           strategy: verticalListSortingStrategy,
-          children: items.map((item) => /* @__PURE__ */ jsx(HabitListItem, { value: item.value, id: item.id }, item.id))
+          children: habits.habits.map((habit) => /* @__PURE__ */ jsx(HabitListItem, { name: habit.name, id: habit.id }, habit.id))
         }
       )
     }
-  ) : null });
+  ) }) });
   function handleDragEnd(event) {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setItems((items2) => {
-        const oldIndex = items2.findIndex((item) => item.id === active.id);
-        const newIndex = items2.findIndex((item) => item.id === over.id);
-        return arrayMove(items2, oldIndex, newIndex);
-      });
-    }
+    const oldIndex = habits.habits.findIndex((item) => item.id === active.id);
+    const newIndex = habits.habits.findIndex((item) => item.id === over.id);
+    habits.set(arrayMove(habits.habits, oldIndex, newIndex));
   }
 }
-function Habits() {
-  return /* @__PURE__ */ jsx(HabitList, {});
-}
-const habits = withSentry(Habits);
 const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: habits
+  default: Habits,
+  loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-CLiefOeC.js", "imports": ["/assets/performance-Durkhqs0.js", "/assets/components-HKQAPtmd.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-0GOHWKrG.js", "imports": ["/assets/performance-Durkhqs0.js", "/assets/components-HKQAPtmd.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-uMucPjnv.js", "imports": ["/assets/performance-Durkhqs0.js"], "css": [] } }, "url": "/assets/manifest-ca08142d.js", "version": "ca08142d" };
+function LoginComponent() {
+  useNavigate();
+  useEffect(() => {
+    async function getRedirect() {
+      const resp = await fetch("/v1/login");
+      const { redirect } = await resp.json();
+      window.location.href = redirect;
+    }
+    getRedirect();
+  });
+  return /* @__PURE__ */ jsx("div", { children: "Redirecting to Google login..." });
+}
+const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: LoginComponent
+}, Symbol.toStringTag, { value: "Module" }));
+const serverManifest = { "entry": { "module": "/assets/entry.client-BICFu7-C.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/performance-CvU6eI7P.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-CRNi61PC.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/performance-CvU6eI7P.js", "/assets/habits-DGr9l4Bu.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-rdZAkgW6.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/habits-DGr9l4Bu.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-XgdEjkne.js", "imports": ["/assets/index-BS7G0_a2.js"], "css": [] } }, "url": "/assets/manifest-de0c36ea.js", "version": "de0c36ea" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
@@ -260,6 +317,14 @@ const routes = {
     index: void 0,
     caseSensitive: void 0,
     module: route1
+  },
+  "routes/login": {
+    id: "routes/login",
+    parentId: "root",
+    path: "login",
+    index: void 0,
+    caseSensitive: void 0,
+    module: route2
   }
 };
 export {
