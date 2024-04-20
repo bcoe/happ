@@ -1,19 +1,48 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
+import { json } from "@remix-run/node";
+import { OAuth2Client } from 'google-auth-library';
+import { FaGoogle } from "react-icons/fa";
+import { Link, useLoaderData } from "@remix-run/react";
 
-export default function LoginComponent () {
-  const navigate = useNavigate()
+const oAuth2Client = new OAuth2Client(
+  process.env.OAUTH_CLIENT_ID,
+  process.env.OAUTH_CLIENT_SECRET,
+  process.env.OAUTH_REDIRECT,
+);
 
-  useEffect(() => {
-    async function getRedirect() {
-      const resp = await fetch("/v1/login");
-      const { redirect } = await resp.json();
-      window.location.href = redirect;
+type RedirectData = {
+  data: {
+    redirect: string;
+  }
+}
+
+export const loader = async () => {
+  const redirect = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ],
+  });
+  return json({
+    data: {
+      redirect
     }
-    getRedirect();
-  })
+  });
+};
 
+export default function Login () {
+  const {data} = useLoaderData<RedirectData>();
   return (
-    <div>Redirecting to Google login...</div>
+    <div className={'bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow'}>
+      <Link id="login-with-google" className={'grid grid-cols-3'} to={data.redirect} data-testid="google-login">
+        <div className={'pt-1'}>
+          <FaGoogle />
+        </div>
+        <div className={'text-center'}>
+          Login with Google
+        </div>
+      </Link>
+    </div>
   )
 }

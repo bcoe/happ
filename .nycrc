@@ -1,0 +1,12 @@
+{
+  "include": [
+    "lib/**"
+  ],
+  "reporter": [
+    "html",
+    "text"
+  ],
+  "lines": "76",
+  "branches": "76",
+  "statements": "76"
+}

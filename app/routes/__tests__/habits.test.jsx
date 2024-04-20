@@ -1,7 +1,5 @@
 
 import { createContext, ReactNode, useContext } from 'react';
-// import { json } from "@remix-run/node";
-// import { useLoaderData } from "@remix-run/react";
 import { createRemixStub } from "@remix-run/testing";
 import {
   render,
@@ -24,7 +22,7 @@ test("renders habits", async () => {
       // loader() {},
     },
   ]);
-   render(
+  render(
     <HabitsProvider testValue={{
       habits: [{id: 'abc123', name: 'be awesome'}],
       load: async () => {}
