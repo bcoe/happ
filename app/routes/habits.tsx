@@ -17,16 +17,15 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import {HabitListItem} from '../components/habit-list-item';
-import { useHabits, HabitType } from '../providers/habits';
+import { useHabits } from '../providers/habits';
 
 export async function loader({request}) {
   await requireUserId(request);
-  return {};
+  return {}
 }
 
 export default function Habits() {
   const habits = useHabits();
-  // const [items, setItems] = useState<HabitType[]>(Array<HabitType>());
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const sensors = useSensors(
     useSensor(PointerSensor),

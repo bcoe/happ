@@ -1,6 +1,7 @@
 import {
   beforeEach, describe, it, before, after,
 } from 'mocha';
+import { mock } from 'node:test';
 import util from 'node:util';
 import { exec } from 'node:child_process';
 import assert from 'assert';
@@ -31,6 +32,7 @@ describe('api', () => {
     await server.close();
   });
   beforeEach(async () => {
+    mock.reset(); // Reset all mocks.
     {
       const { stderr } = await execP('npm run db:rollback -- --all');
       if (stderr) {
@@ -45,9 +47,9 @@ describe('api', () => {
     }
   });
   describe('POST /v1/habits', () => {
-    it('returns 422 status if name not set', async () => {
+    it('returns 422 status if email not set', async () => {
       /// Mock the session middleware as though there's a logged in user.
-      const { id } = (await api.getDatabase()('users').insert({ name: 'fake-bcoe' }, ['id']))[0];
+      const { id } = (await api.getDatabase()('users').insert({ email: 'fake@example.com', account_type: 'google' }, ['id']))[0];
       api.helpers.authenticated = (req, res, next) => {
         req.userId = id;
         return next();
@@ -64,8 +66,8 @@ describe('api', () => {
 
     it('creates and returns a new habit if name is set', async () => {
       /// Mock the session middleware as though there's a logged in user.
-      const { id } = (await api.getDatabase()('users').insert({ name: 'fake-bcoe' }, ['id']))[0];
-      api.helpers.authenticated = (req, res, next) => {
+      const { id } = (await api.getDatabase()('users').insert({ email: 'fake@example.com', account_type: 'google' }, ['id']))[0];
+      api.helpers.authenticated = (req, _res, next) => {
         req.userId = id;
         return next();
       };
@@ -79,6 +81,63 @@ describe('api', () => {
       assert.strictEqual(resp.status, 201);
       const json = await resp.json();
       assert(UUID_REGEX.test(json.id));
+    });
+  });
+
+  describe('GET /v1/callback', () => {
+    it('creates user if none exists', async () => {
+      // Mock the getToken() call to exchange code for access token:
+      mock.method(api.getGoogleOAuthClient(), 'getToken', () => ({
+        tokens: {
+          access_token: 'foo',
+        },
+      }));
+      // Mock the call to fetch profile information with access token:
+      const originalFetch = global.fetch;
+      mock.method(global, 'fetch', (url, opts) => {
+        if (url.includes('www.googleapis.com')) {
+          return {
+            json: () => ({ email: 'bob@example.com' }),
+          };
+        }
+        return originalFetch(url, opts);
+      });
+      await fetch(`${SERVER}/v1/callback`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // TODO: check that the user was created in the DB.
+    });
+
+    it('uses an existing user if available', async () => {
+      /// Mock the session middleware as though there's a logged in user.
+      // const { id } = (await api.getDatabase()('users')
+      // .insert({ email: 'fake@example.com', account_type: 'google' }, ['id']))[0];
+      // Mock the getToken() call to exchange code for access token:
+      mock.method(api.getGoogleOAuthClient(), 'getToken', () => ({
+        tokens: {
+          access_token: 'foo',
+        },
+      }));
+      // Mock the call to fetch profile information with access token:
+      const originalFetch = global.fetch;
+      mock.method(global, 'fetch', (url, opts) => {
+        if (url.includes('www.googleapis.com')) {
+          return {
+            json: () => ({ email: 'fake@example.com' }),
+          };
+        }
+        return originalFetch(url, opts);
+      });
+      await fetch(`${SERVER}/v1/callback`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // TODO: check that the existing user was used.
     });
   });
 });

@@ -1,3 +1,4 @@
+import React from 'react';
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import {
   Link,
@@ -6,15 +7,28 @@ import {
   Outlet,
   Scripts,
   useRouteError,
+  useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import { json, LinksFunction } from "@remix-run/node";
 import styles from "./styles/shared.css?url";
 import {HabitsProvider} from './providers/habits';
+import { isLoggedIn } from "./session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ];
+
+type LoggedInData = {
+  isLoggedIn: boolean;
+}
+
+export const loader = async ({request}) => {
+  const userId = await isLoggedIn(request);
+  return json<LoggedInData>({ isLoggedIn: !!userId });
+};
+
 function App() {
+  const { isLoggedIn } = useLoaderData<typeof loader>();
   return (
     <html>
       <head>
@@ -31,9 +45,16 @@ function App() {
             <div>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
             </div>
-            <div>
-              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
-            </div>
+            {isLoggedIn &&
+              <div>
+                <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
+              </div>
+            }
+            {!isLoggedIn &&
+              <div>
+                <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
+              </div>
+            }
           </div>
         </div>
         <div className={'grid grid-cols-3'}>

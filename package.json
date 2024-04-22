@@ -7,7 +7,8 @@
   "scripts": {
     "build": "remix vite:build",
     "fix": "eslint '**/*.mjs' '**/*.cjs' --fix",
-    "test": "c8 cross-env NODE_ENV=test mocha ./test/api.mjs && npm run test:frontend",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "c8 cross-env NODE_ENV=test mocha ./test/api.mjs",
     "test:frontend": "vitest --coverage --run ./app",
     "posttest": "eslint '**/*.mjs' '**/*.cjs'",
     "start": "node lib/index.mjs",
