@@ -2,24 +2,29 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "5b6b3737-3a41-4a6f-b98b-3e6b1453741a", e._sentryDebugIdIdentifier = "sentry-dbid-5b6b3737-3a41-4a6f-b98b-3e6b1453741a");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "fda2bf3e-a64a-48f0-945d-4bd8bbfece4e", e._sentryDebugIdIdentifier = "sentry-dbid-fda2bf3e-a64a-48f0-945d-4bd8bbfece4e");
   } catch (e2) {
   }
 }();
 import { jsx, jsxs } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
-import { createReadableStreamFromReadable } from "@remix-run/node";
-import { RemixServer, Links, Meta, Link, Outlet, Scripts, useRouteError, Await } from "@remix-run/react";
+import { createReadableStreamFromReadable, redirect, json } from "@remix-run/node";
+import { RemixServer, useLoaderData, Links, Meta, Link, Outlet, Scripts, useRouteError, Await } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import * as React from "react";
 import { useState, useEffect, Suspense } from "react";
+import "dotenv/config";
+import { createClient } from "redis";
+import RedisStore from "connect-redis";
+import session from "express-session";
 import { useSensors, useSensor, PointerSensor, TouchSensor, KeyboardSensor, DndContext, closestCenter } from "@dnd-kit/core";
 import { useSortable, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { RxDragHandleHorizontal } from "react-icons/rx";
-import { useNavigate } from "react-router-dom";
+import { OAuth2Client } from "google-auth-library";
+import { FaGoogle } from "react-icons/fa";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
@@ -130,9 +135,9 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-DByhrGWj.css";
+const styles = "/assets/shared-DoINzmaJ.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "f33cc3be66110bdccd95a1a4edf93a53b8178aff" };
+_global.SENTRY_RELEASE = { id: "a6cd242f6e4082e3c5cd00064f4e5ca8a436f48f" };
 const HabitsContext = React.createContext(null);
 const HABITS = [
   {
@@ -165,10 +170,62 @@ function HabitsProvider({ children }) {
 function useHabits() {
   return React.useContext(HabitsContext);
 }
+const isTestEnvironment = process.env.NODE_ENV === "test";
+const sessionOpts = {
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET
+};
+const sessionPrefix = `happ:${process.env.NODE_ENV}`;
+if (!isTestEnvironment) {
+  const redisClient = createClient({
+    url: process.env.REDIS_URL
+  });
+  const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: sessionPrefix
+  });
+  redisClient.connect();
+  redisClient.unref();
+  sessionOpts.store = redisStore;
+}
+const s = session(sessionOpts);
+async function isLoggedIn(req) {
+  const connectReq = {
+    headers: {
+      cookie: req.headers.get("cookie")
+    },
+    url: "/"
+  };
+  s(connectReq, {}, () => {
+  });
+  const sess = await new Promise((resolve) => {
+    if (!connectReq.sessionID)
+      return resolve({});
+    if (!connectReq.sessionStore)
+      return resolve({});
+    connectReq.sessionStore.get(connectReq.sessionID, (err, sess2) => {
+      if (err || !sess2)
+        return resolve({});
+      return resolve(sess2);
+    });
+  });
+  return sess.userId;
+}
+async function requireUserId(req) {
+  if (!await isLoggedIn(req)) {
+    throw redirect("/login");
+  }
+}
 const links = () => [
   { rel: "stylesheet", href: styles }
 ];
+const loader$2 = async ({ request }) => {
+  const userId = await isLoggedIn(request);
+  return json({ isLoggedIn: !!userId });
+};
 function App() {
+  const { isLoggedIn: isLoggedIn2 } = useLoaderData();
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsxs("head", { children: [
       /* @__PURE__ */ jsx(
@@ -184,7 +241,8 @@ function App() {
     /* @__PURE__ */ jsxs("body", { children: [
       /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-10", children: [
         /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
+        isLoggedIn2 && /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
+        !isLoggedIn2 && /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-3", children: [
         /* @__PURE__ */ jsx("div", {}),
@@ -205,12 +263,9 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   ErrorBoundary,
   default: root,
-  links
+  links,
+  loader: loader$2
 }, Symbol.toStringTag, { value: "Module" }));
-async function requireUserId(request) {
-  const userId = "bcoe";
-  return userId;
-}
 function HabitListItem(props) {
   const {
     attributes,
@@ -229,8 +284,8 @@ function HabitListItem(props) {
     /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "checkbox" }) })
   ] }) });
 }
-async function loader({ request }) {
-  await requireUserId();
+async function loader$1({ request }) {
+  await requireUserId(request);
   return {};
 }
 function Habits() {
@@ -275,25 +330,40 @@ function Habits() {
 const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Habits,
-  loader
+  loader: loader$1
 }, Symbol.toStringTag, { value: "Module" }));
-function LoginComponent() {
-  useNavigate();
-  useEffect(() => {
-    async function getRedirect() {
-      const resp = await fetch("/v1/login");
-      const { redirect } = await resp.json();
-      window.location.href = redirect;
-    }
-    getRedirect();
+const oAuth2Client = new OAuth2Client(
+  process.env.OAUTH_CLIENT_ID,
+  process.env.OAUTH_CLIENT_SECRET,
+  process.env.OAUTH_REDIRECT
+);
+const loader = async () => {
+  const redirect2 = oAuth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
   });
-  return /* @__PURE__ */ jsx("div", { children: "Redirecting to Google login..." });
+  return json({
+    data: {
+      redirect: redirect2
+    }
+  });
+};
+function Login() {
+  const { data } = useLoaderData();
+  return /* @__PURE__ */ jsx("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", children: /* @__PURE__ */ jsxs(Link, { id: "login-with-google", className: "grid grid-cols-3", to: data.redirect, "data-testid": "google-login", children: [
+    /* @__PURE__ */ jsx("div", { className: "pt-1", children: /* @__PURE__ */ jsx(FaGoogle, {}) }),
+    /* @__PURE__ */ jsx("div", { className: "text-center", children: "Login with Google" })
+  ] }) });
 }
 const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: LoginComponent
+  default: Login,
+  loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-BICFu7-C.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/performance-CvU6eI7P.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-CRNi61PC.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/performance-CvU6eI7P.js", "/assets/habits-DGr9l4Bu.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-rdZAkgW6.js", "imports": ["/assets/index-BS7G0_a2.js", "/assets/components-DxCqp97G.js", "/assets/habits-DGr9l4Bu.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-XgdEjkne.js", "imports": ["/assets/index-BS7G0_a2.js"], "css": [] } }, "url": "/assets/manifest-de0c36ea.js", "version": "de0c36ea" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-B3DUPj5Q.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/performance-j-rtnWpx.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BK8_5bdY.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/performance-j-rtnWpx.js", "/assets/habits-C1QezHOh.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-xZkHxlRz.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/iconBase-Ch-PfKxy.js", "/assets/habits-C1QezHOh.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-CleVwxUk.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/iconBase-Ch-PfKxy.js"], "css": [] } }, "url": "/assets/manifest-09f105d6.js", "version": "09f105d6" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
