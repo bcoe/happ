@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "fda2bf3e-a64a-48f0-945d-4bd8bbfece4e", e._sentryDebugIdIdentifier = "sentry-dbid-fda2bf3e-a64a-48f0-945d-4bd8bbfece4e");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "4071507f-8a2d-4cf7-b07e-a3c2a9e6f827", e._sentryDebugIdIdentifier = "sentry-dbid-4071507f-8a2d-4cf7-b07e-a3c2a9e6f827");
   } catch (e2) {
   }
 }();
@@ -137,7 +137,7 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
 }, Symbol.toStringTag, { value: "Module" }));
 const styles = "/assets/shared-DoINzmaJ.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "a6cd242f6e4082e3c5cd00064f4e5ca8a436f48f" };
+_global.SENTRY_RELEASE = { id: "f0839b464a0e7f1df887be9f42446484a039b6f4" };
 const HabitsContext = React.createContext(null);
 const HABITS = [
   {
@@ -363,7 +363,7 @@ const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-B3DUPj5Q.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/performance-j-rtnWpx.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BK8_5bdY.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/performance-j-rtnWpx.js", "/assets/habits-C1QezHOh.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-xZkHxlRz.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/iconBase-Ch-PfKxy.js", "/assets/habits-C1QezHOh.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-CleVwxUk.js", "imports": ["/assets/components-D9D8MDEo.js", "/assets/iconBase-Ch-PfKxy.js"], "css": [] } }, "url": "/assets/manifest-09f105d6.js", "version": "09f105d6" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BMLJ-zHY.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/performance-B1BCIvlL.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-B6OIoH10.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/performance-B1BCIvlL.js", "/assets/habits-D6OWiGIq.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-DfSlFhTx.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/iconBase-CDJJ_55h.js", "/assets/habits-D6OWiGIq.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-DDGwNWSG.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/iconBase-CDJJ_55h.js"], "css": [] } }, "url": "/assets/manifest-18a81b0b.js", "version": "18a81b0b" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
