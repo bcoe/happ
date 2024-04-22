@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "4071507f-8a2d-4cf7-b07e-a3c2a9e6f827", e._sentryDebugIdIdentifier = "sentry-dbid-4071507f-8a2d-4cf7-b07e-a3c2a9e6f827");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "f59607c4-eeb5-4787-88e7-bde41f45fef1", e._sentryDebugIdIdentifier = "sentry-dbid-f59607c4-eeb5-4787-88e7-bde41f45fef1");
   } catch (e2) {
   }
 }();
@@ -137,7 +137,7 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
 }, Symbol.toStringTag, { value: "Module" }));
 const styles = "/assets/shared-DoINzmaJ.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "f0839b464a0e7f1df887be9f42446484a039b6f4" };
+_global.SENTRY_RELEASE = { id: "51d3a55c34f18467202313e9e8c013a1a96a6e91" };
 const HabitsContext = React.createContext(null);
 const HABITS = [
   {
@@ -363,7 +363,7 @@ const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-BMLJ-zHY.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/performance-B1BCIvlL.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-B6OIoH10.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/performance-B1BCIvlL.js", "/assets/habits-D6OWiGIq.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-DfSlFhTx.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/iconBase-CDJJ_55h.js", "/assets/habits-D6OWiGIq.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-DDGwNWSG.js", "imports": ["/assets/components-PBvexyx9.js", "/assets/iconBase-CDJJ_55h.js"], "css": [] } }, "url": "/assets/manifest-18a81b0b.js", "version": "18a81b0b" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-C9SHmalQ.js", "imports": ["/assets/components-DEkji6Ti.js", "/assets/performance-N4gwM7_P.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-CS9Xsrhw.js", "imports": ["/assets/components-DEkji6Ti.js", "/assets/performance-N4gwM7_P.js", "/assets/habits-CeFELc5u.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-O2laYCnW.js", "imports": ["/assets/components-DEkji6Ti.js", "/assets/iconBase-OkIvxn1k.js", "/assets/habits-CeFELc5u.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-BM6pkR0P.js", "imports": ["/assets/components-DEkji6Ti.js", "/assets/iconBase-OkIvxn1k.js"], "css": [] } }, "url": "/assets/manifest-ad3de768.js", "version": "ad3de768" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
