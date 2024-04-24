@@ -6,3 +6,8 @@ NODE_MODULES
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+.DS_Store
+
+coverage
+
