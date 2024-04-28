@@ -57,9 +57,9 @@ function App() {
             }
           </div>
         </div>
-        <div className={'grid grid-cols-3'}>
+        <div className={'grid grid-cols-9'}>
           <div />
-          <div>
+          <div className={'col-span-7'}>
             <HabitsProvider>
               <Outlet />
             </HabitsProvider>

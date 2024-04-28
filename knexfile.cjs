@@ -1,4 +1,5 @@
-require('dotenv').config();
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+if (!isTestEnvironment) require('dotenv').config();
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }

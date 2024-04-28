@@ -5,6 +5,7 @@ export interface HabitType {
   habit_id: string;
   id: string;
   status: boolean;
+  date: string;
 }
 
 interface HabitsType {
@@ -47,7 +48,8 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
       },
       body: JSON.stringify({
         habit_id: habit.habit_id,
-        status: !habit.status
+        status: !habit.status,
+        date: habit.date,
       })
     });
   }
