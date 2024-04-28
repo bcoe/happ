@@ -81,6 +81,47 @@ describe('api', () => {
       assert.strictEqual(resp.status, 201);
       const json = await resp.json();
       assert(UUID_REGEX.test(json.id));
+      // It should have also create a positon for the habit in the list:
+      const positions = await api.getDatabase()('habits_active_position')
+        .select(['position', 'habit_id'])
+        .where('user_id', id);
+      assert.strictEqual(positions.length, 1);
+      assert.strictEqual(positions[0].habit_id, json.id);
+    });
+  });
+
+  describe('GET /v1/habits-daily', () => {
+    it('creates a new list of daily habits if one does not exist for day', async () => {
+      /// Mock the session middleware as though there's a logged in user.
+      const { id } = (await api.getDatabase()('users').insert({ email: 'fake@example.com', account_type: 'google' }, ['id']))[0];
+      api.helpers.authenticated = (req, _res, next) => {
+        req.userId = id;
+        return next();
+      };
+      // Create some fake habits:
+      await fetch(`${SERVER}/v1/habits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: 'brush teeth' }),
+      });
+      await fetch(`${SERVER}/v1/habits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: 'make coffee' }),
+      });
+      const resp = await fetch(`${SERVER}/v1/habits-daily`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      assert.strictEqual(resp.status, 200);
+      const habits = await resp.json();
+      assert.strictEqual(habits.length, 2);
     });
   });
 
