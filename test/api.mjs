@@ -13,7 +13,6 @@ const execP = util.promisify(exec);
 // "test", but we should be extra careful to not run db:rollback
 // in a non-test environment.
 process.env.NODE_ENV = 'test';
-
 process.env.DATABASE_URL = process.env.DATABASE_URL ?? 'postgresql://127.0.0.1:5432/happ_test';
 // This is a fake session secret.
 process.env.SESSION_SECRET = process.env.SESSION_SECRET ?? '31ba3298-5b08-4ef6-8c25-a536b7b46c64';
