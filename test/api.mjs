@@ -82,10 +82,10 @@ describe('api', () => {
       assert(UUID_REGEX.test(json.id));
       // It should have also create a positon for the habit in the list:
       const positions = await api.getDatabase()('habits_active_position')
-        .select(['position', 'habit_id'])
+        .first(['sorted_habit_ids'])
         .where('user_id', id);
-      assert.strictEqual(positions.length, 1);
-      assert.strictEqual(positions[0].habit_id, json.id);
+      assert.strictEqual(positions.sorted_habit_ids.length, 1);
+      assert.strictEqual(positions.sorted_habit_ids[0], json.id);
     });
   });
 
@@ -121,6 +121,44 @@ describe('api', () => {
       assert.strictEqual(resp.status, 200);
       const habits = await resp.json();
       assert.strictEqual(habits.length, 2);
+    });
+  });
+
+  describe('POST /v1/habits/array-move', () => {
+    it('swaps positions of two items', async () => {
+      /// Mock the session middleware as though there's a logged in user.
+      const { id } = (await api.getDatabase()('users').insert({ email: 'fake@example.com', account_type: 'google' }, ['id']))[0];
+      api.helpers.authenticated = (req, _res, next) => {
+        req.userId = id;
+        return next();
+      };
+      // Create some fake habits:
+      const { id: aId } = await (await fetch(`${SERVER}/v1/habits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: 'a' }),
+      })).json();
+      const { id: bId } = await (await fetch(`${SERVER}/v1/habits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: 'd' }),
+      })).json();
+      const resp = await fetch(`${SERVER}/v1/habits/array-move`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          oldIndex: 1,
+          newIndex: 0,
+        }),
+      });
+      const orderedIds = await resp.json();
+      assert.deepStrictEqual(orderedIds, [bId, aId]);
     });
   });
 

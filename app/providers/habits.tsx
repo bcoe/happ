@@ -14,6 +14,7 @@ interface HabitsType {
   create: (name: string) => Promise<void>;
   set: (habits: Array<HabitType>) => {};
   toggle: (id: string) => Promise<void>;
+  move: (oldIndex: number, newIndex: number) => Promise<void>;
 }
 
 const HabitsContext = React.createContext<HabitsType>(null!);
@@ -54,6 +55,19 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
+  const move = async (oldIndex: number, newIndex: number) => {
+    await fetch('/v1/habits/array-move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        oldIndex,
+        newIndex
+      })
+    });
+  }
+
   const load = async () => {
     const resp = await fetch("/v1/habits-daily");
     const habits = await resp.json();
@@ -63,7 +77,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     set(habits);
   }
 
-  const value = { habits, load, set, create, toggle };
+  const value = { habits, load, set, create, toggle, move };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }

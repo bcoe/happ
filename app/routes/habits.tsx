@@ -53,6 +53,25 @@ export default function Habits() {
     setSorting(!sorting);
   }
 
+  async function handleDragEnd(event) {
+    const {active, over} = event;
+    const oldIndex = habits.habits.findIndex(item => item.habit_id === active.id);
+    const newIndex = habits.habits.findIndex(item => item.habit_id === over.id);
+    let insertIndex = newIndex;
+    let action = 'before';
+    if (newIndex > oldIndex) {
+      action = 'after';
+      if (newIndex >= habits.habits.length) {
+        insertIndex = habits.habits.length - 1;
+      }
+    }
+    if (oldIndex !== newIndex) {
+      habits.set(arrayMove(habits.habits, oldIndex, newIndex));
+      await habits.move(oldIndex, newIndex);
+      await habits.load();
+    }
+  }
+
   return (
     <Suspense>
         <Await resolve={habits}>
@@ -87,11 +106,4 @@ export default function Habits() {
         </Await>
     </Suspense>
   )
-
-  function handleDragEnd(event) {
-    const {active, over} = event;
-    const oldIndex = habits.habits.findIndex(item => item.habit_id === active.id);
-    const newIndex = habits.habits.findIndex(item => item.habit_id === over.id);
-    habits.set(arrayMove(habits.habits, oldIndex, newIndex));
-  }
 }
