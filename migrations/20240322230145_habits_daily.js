@@ -12,7 +12,7 @@ export const up = function (knex) {
       table.uuid('user_id').notNullable();
 
       table.primary(['habit_id', 'date']);
-      table.unique('habit_id');
+      table.unique(['habit_id', 'date']);
       table.foreign('habit_id').references('id').inTable('habits');
       table.foreign('user_id').references('id').inTable('users');
     });
