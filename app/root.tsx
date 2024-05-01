@@ -45,6 +45,9 @@ function App() {
             <div>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
             </div>
+            <div>
+              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
+            </div>
             {isLoggedIn &&
               <div>
                 <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
