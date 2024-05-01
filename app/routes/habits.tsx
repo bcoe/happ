@@ -16,7 +16,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import {HabitListItem} from '../components/habit-list-item';
+import { HabitListItem } from '../components/habit-list-item';
 import { useHabits } from '../providers/habits';
 
 export async function loader({request}) {
