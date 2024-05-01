@@ -8,6 +8,7 @@ export const up = function (knex) {
       table.specificType('sorted_habit_ids', 'uuid ARRAY')
       table.uuid('user_id').notNullable();
       table.primary(['user_id']);
+      table.foreign('user_id').references('id').inTable('users');
     });
 };
 

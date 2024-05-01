@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { json, useLoaderData } from "@remix-run/react";
 
+/*
 const data = [
   {
     name: '2018-04-5',
@@ -31,18 +33,19 @@ const data = [
     completed: 1.0
   },
 ];
+*/
 
 const toPercent = (decimal) => `${(decimal * 100).toFixed(0)}%`;
 const tooltipFormatter = (value) => toPercent(value);
 
-export default class HabitAreaChart extends PureComponent {
+export default class HabitAreaChart extends PureComponent<{data: any}> {
   render() {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           width={500}
           height={400}
-          data={data}
+          data={this.props.data}
           margin={{
             top: 10,
             right: 30,

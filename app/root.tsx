@@ -12,6 +12,7 @@ import {
 import { json, LinksFunction } from "@remix-run/node";
 import styles from "./styles/shared.css?url";
 import {HabitsProvider} from './providers/habits';
+import {MetricsProvider} from './providers/metrics';
 import { isLoggedIn } from "./session.server";
 
 export const links: LinksFunction = () => [
@@ -49,12 +50,12 @@ function App() {
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
             </div>
             {isLoggedIn &&
-              <div>
+              <div className={'text-right col-span-8'}>
                 <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
               </div>
             }
             {!isLoggedIn &&
-              <div>
+              <div className={'text-right col-span-8'}>
                 <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
               </div>
             }
@@ -64,7 +65,9 @@ function App() {
           <div />
           <div className={'col-span-7'}>
             <HabitsProvider>
-              <Outlet />
+              <MetricsProvider>
+                <Outlet />
+              </MetricsProvider>
             </HabitsProvider>
           </div>
           <div />
