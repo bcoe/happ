@@ -27,7 +27,7 @@ export function MetricsProvider({ children }: { children: React.ReactNode }) {
     const resp = await fetch("/v1/metrics");
     const m = await resp.json();
     set({daily: m.map((item) => {
-      const date = (new Date(item.date)).toLocaleString('lt', { timeZone: 'America/New_York' }).split(' ')[0];
+      const date = (new Date(item.date)).toISOString().split('T')[0];
       return {
         name: date,
         completed: item.habits_completed / item.total_habits_for_day
