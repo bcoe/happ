@@ -37,8 +37,8 @@ export default function Habits() {
   );
   useEffect(() => {
     if (!initialLoad) return;
-    setInitialLoad(false);
     habits.load();
+    setInitialLoad(false);
   }, [initialLoad, habits]);
   
   async function createDailyHabit(e) {
@@ -75,6 +75,19 @@ export default function Habits() {
   return (
     <Suspense>
         <Await resolve={habits}>
+          {habits.empty ? (
+              <div className={'border-dashed border-2 border-slate-100 grid grid-cols-3 p-10'}>
+                <div></div>
+                <div>
+                  <p>
+                    You have not yet created your first daily habit. Enter a daily habit that you would
+                    like to start keeping into the text box below and click
+                    <span className={'text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded'}>Add Habit</span>
+                  </p>
+                </div>
+                <div></div>
+              </div>
+          ) : ''}
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -87,12 +100,7 @@ export default function Habits() {
               {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} disabled={!sorting} />)}
             </SortableContext>
           </DndContext>
-          <label className="mt-3 inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" className="sr-only peer" checked={sorting} onChange={handleChange} />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Edit habits</span>
-          </label>
-          {sorting ? (
+          {(sorting || habits.empty) ? (
             <form onSubmit={createDailyHabit} className={'grid grid-cols-6 mt-3 w-11/12'}>
               <div></div>
               <div className={'col-span-4'}>
@@ -103,6 +111,11 @@ export default function Habits() {
               </div>
             </form>
           ) : ''}
+          <label className="mt-3 inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" className="sr-only peer" checked={sorting || habits.empty} onChange={handleChange} />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Add / sort habits</span>
+          </label>
         </Await>
     </Suspense>
   )

@@ -10,6 +10,7 @@ export interface HabitType {
 
 interface HabitsType {
   habits: Array<HabitType>; 
+  empty: boolean;
   load: () => Promise<void>;
   create: (name: string) => Promise<void>;
   set: (habits: Array<HabitType>) => {};
@@ -21,9 +22,11 @@ const HabitsContext = React.createContext<HabitsType>(null!);
 
 export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [habits, setHabits] =  React.useState<Array<HabitType>>([]);
+  const [empty, setEmpty] = React.useState<boolean>(false);
 
   const set = (habits: Array<HabitType>) => {
     setHabits([...habits]);
+    setEmpty(!habits.length);
     return {}
   }
 
@@ -77,7 +80,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     set(habits);
   }
 
-  const value = { habits, load, set, create, toggle, move };
+  const value = { habits, empty, load, set, create, toggle, move };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }
