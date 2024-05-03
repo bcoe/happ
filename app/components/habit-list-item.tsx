@@ -31,7 +31,7 @@ export function HabitListItem(props) {
   };
   return (
     <div className={'grid grid-cols-12'}>
-      <div className={'col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item'} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <div className={'col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch'} ref={setNodeRef} style={style} {...attributes} {...listeners}>
         <div className={'grid grid-cols-12'}>
           <div>
             {props.disabled ? '' : <RxDragHandleHorizontal className="mt-2" />}
