@@ -30,17 +30,17 @@ export function HabitListItem(props) {
     transition,
   };
   return (
-    <div className={'grid grid-cols-12'}>
-      <div className={'col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch'} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div className={'grid grid-cols-12'} ref={setNodeRef} style={style} {...attributes}>
+      <div className={'col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch'} >
         <div className={'grid grid-cols-12'}>
-          <div>
+          <div {...listeners}>
             {props.disabled ? '' : <RxDragHandleHorizontal className="mt-2" />}
           </div>
           <div className={'col-span-10 mt-0.5'}>
             {props.name}
           </div>
           <div className={'text-right'}>
-            <input type="checkbox" checked={props.status} disabled={!props.disabled} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+            <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
           </div>
         </div>
       </div>

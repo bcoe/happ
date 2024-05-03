@@ -45,7 +45,9 @@ function App() {
         <div className={'header'}>
           <div className={'grid grid-cols-10'}>
             <div>
-              <FaThList className={'ml-8 mt-1'} />
+              <Link to="/">
+                <FaThList className={'ml-8 mt-1'} />
+              </Link>
             </div>
             <div>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
