@@ -2,7 +2,7 @@ import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { RxDragHandleHorizontal } from "react-icons/rx";
-import { FaTrashAlt } from "react-icons/fa";
+// import { FaTrashAlt } from "react-icons/fa";
 import { useHabits } from '../providers/habits';
 
 export function HabitListItem(props) {
@@ -30,22 +30,17 @@ export function HabitListItem(props) {
     transition,
   };
   return (
-    <div className={'grid grid-cols-12'} ref={setNodeRef} style={style} {...attributes}>
-      <div className={'col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch'} >
-        <div className={'grid grid-cols-12'}>
-          <div {...listeners}>
-            {props.disabled ? '' : <RxDragHandleHorizontal className="mt-2" />}
-          </div>
-          <div className={'col-span-10 mt-0.5'}>
-            {props.name}
-          </div>
-          <div className={'text-right'}>
-            <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
-          </div>
+    <div ref={setNodeRef} style={style} {...attributes}>
+      <div className='flex w-full bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
+        <div {...listeners} className="w-8 mr-2">
+          {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
         </div>
-      </div>
-      <div className={'col-span-1'}>
-        {props.disabled ? '' : <button onClick={handleDelete}><FaTrashAlt className="mt-3 ml-3" /></button>}
+        <div className='w-5/6 mt-0.5'>
+          {props.name}
+        </div>
+        <div className='w-1/6 text-right'>
+          <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+        </div>
       </div>
     </div>
   );
