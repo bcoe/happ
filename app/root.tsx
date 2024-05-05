@@ -44,27 +44,25 @@ function App() {
       </head>
       <body>
         <div className={'header'}>
-          <div className='grid grid-cols-2'>
-            <div className="flex">
-              <div>
-                <Link to="/">
-                  <FaThList className={'ml-8 mt-1 size-5'} />
-                </Link>
-              </div>
-              <div className='ml-8'>
-                <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
-              </div>
-              <div className='ml-8'>
-                <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
-              </div>
+          <div className="flex">
+            <div>
+              <Link to="/">
+                <FaThList className={'ml-8 mt-1 size-5'} />
+              </Link>
+            </div>
+            <div className='ml-8'>
+              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
+            </div>
+            <div className='ml-8'>
+              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
             </div>
             {isLoggedIn &&
-              <div className={'text-right'}>
+              <div className={'text-right w-full'}>
                 <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
               </div>
             }
             {!isLoggedIn &&
-              <div className={'text-right'}>
+              <div className={'text-right w-full'}>
                 <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
               </div>
             }
