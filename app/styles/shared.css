@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-size: 18px;
+}
+
 .header {
   height: 50px;
   background-color: rgb(250, 250, 250);

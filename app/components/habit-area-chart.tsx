@@ -10,8 +10,6 @@ export default class HabitAreaChart extends PureComponent<{data: any}> {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          width={500}
-          height={400}
           data={this.props.data}
           margin={{
             top: 10,

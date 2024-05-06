@@ -40,43 +40,44 @@ function App() {
         />
         <Links />
         <Meta />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body>
         <div className={'header'}>
-          <div className={'grid grid-cols-10'}>
+          <div className="flex">
             <div>
               <Link to="/">
-                <FaThList className={'ml-8 mt-1'} />
+                <FaThList className={'ml-8 mt-1 size-5'} />
               </Link>
             </div>
-            <div>
+            <div className='ml-8'>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
             </div>
-            <div>
+            <div className='ml-8'>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
             </div>
             {isLoggedIn &&
-              <div className={'text-right col-span-7'}>
+              <div className={'text-right w-full'}>
                 <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
               </div>
             }
             {!isLoggedIn &&
-              <div className={'text-right col-span-7'}>
+              <div className={'text-right w-full'}>
                 <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
               </div>
             }
           </div>
         </div>
-        <div className={'grid grid-cols-9'}>
-          <div />
-          <div className={'col-span-7'}>
+        <div className='flex w-full'>
+          <div className='lg:w-1/6' />
+          <div className={'w-full lg:w-4/6'}>
             <HabitsProvider>
               <MetricsProvider>
                 {<Outlet />}
               </MetricsProvider>
             </HabitsProvider>
           </div>
-          <div />
+          <div className='lg:w-1/6' />
         </div>
         <Scripts />
       </body>

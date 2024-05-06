@@ -26,6 +26,31 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
 
   const set = (habits: Array<HabitType>) => {
     setHabits([...habits]);
+    /*
+      setHabits([
+        {
+          name: 'get up without hitting snooze',
+          habit_id: 'abc-123',
+          id: 'abc-123',
+          status: true,
+          date: '10-10-1983'
+        },
+        {
+          name: 'take finn for walk',
+          habit_id: 'abc-124',
+          id: 'abc-124',
+          status: true,
+          date: '10-10-1983'
+        },
+        {
+          name: 'make breakfast at home',
+          habit_id: 'abc-125',
+          id: 'abc-124',
+          status: true,
+          date: '10-10-1983'
+        }
+      ]);
+    */
     setEmpty(!habits.length);
     return {}
   }
