@@ -25,7 +25,7 @@ const HabitsContext = React.createContext<HabitsType>(null!);
 export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [habits, setHabits] =  React.useState<Array<HabitType>>([]);
   const [empty, setEmpty] = React.useState<boolean>(false);
-  const [editing, _setEditing] = React.useState<boolean>(true);
+  const [editing, _setEditing] = React.useState<boolean>(false);
 
   const set = (habits: Array<HabitType>) => {
     setHabits([...habits]);

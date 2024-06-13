@@ -2,7 +2,7 @@ import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { RxDragHandleHorizontal } from "react-icons/rx";
-// import { FaTrashAlt } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
 import { useHabits } from '../providers/habits';
 
 export function HabitListItem(props) {
@@ -21,8 +21,9 @@ export function HabitListItem(props) {
     await habits.load();
   }
 
-  async function handleDelete() {
+  async function handleEdit() {
     console.info(props.id);
+    habits.setEditing(true);
   }
   
   const style = {
@@ -39,7 +40,15 @@ export function HabitListItem(props) {
           {props.name}
         </div>
         <div className='w-1/6 text-right'>
-          <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+          <div className="flex w-full">
+            <div className='w-2/4' />
+            <div className='w-1/4'>
+              {props.disabled ? '' : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
+            </div>
+            <div className='w-1/4'>
+              <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
