@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "8edc5f46-cd6f-4cd0-827e-24654da979be", e._sentryDebugIdIdentifier = "sentry-dbid-8edc5f46-cd6f-4cd0-827e-24654da979be");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "6e310a59-e63b-400b-ac38-048d6fb11e3c", e._sentryDebugIdIdentifier = "sentry-dbid-6e310a59-e63b-400b-ac38-048d6fb11e3c");
   } catch (e2) {
   }
 }();
@@ -14,21 +14,23 @@ import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import * as React from "react";
-import { PureComponent, useState, useEffect, Suspense } from "react";
+import React__default, { PureComponent, useState, useEffect, Suspense } from "react";
 import "dotenv/config";
 import { createClient } from "redis";
 import RedisStore from "connect-redis";
 import session from "express-session";
-import { FaThList, FaTrashAlt, FaGoogle } from "react-icons/fa";
+import { FaThList, FaGoogle } from "react-icons/fa";
 import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Area } from "recharts";
 import { useSensors, useSensor, PointerSensor, TouchSensor, KeyboardSensor, DndContext, closestCenter } from "@dnd-kit/core";
 import { useSortable, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { RxDragHandleHorizontal } from "react-icons/rx";
+import { FiEdit } from "react-icons/fi";
 import { OAuth2Client } from "google-auth-library";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
-  return isBotRequest(request.headers.get("user-agent")) ? handleBotRequest(
+  let prohibitOutOfOrderStreaming = isBotRequest(request.headers.get("user-agent")) || remixContext.isSpaMode;
+  return prohibitOutOfOrderStreaming ? handleBotRequest(
     request,
     responseStatusCode,
     responseHeaders,
@@ -136,13 +138,14 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-DgbdRuRi.css";
+const styles = "/assets/shared-B1YQ5w_R.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "c53afed45a7876062352ce3e55565e5fbae132c6" };
+_global.SENTRY_RELEASE = { id: "6b8bb7c375902836ebb309da8c6f56b87acb8dce" };
 const HabitsContext = React.createContext(null);
 function HabitsProvider({ children }) {
   const [habits, setHabits] = React.useState([]);
   const [empty, setEmpty] = React.useState(false);
+  const [editing, _setEditing] = React.useState(false);
   const set = (habits2) => {
     setHabits([...habits2]);
     setEmpty(!habits2.length);
@@ -196,7 +199,10 @@ function HabitsProvider({ children }) {
     });
     set(habits2);
   };
-  const value = { habits, empty, load, set, create, toggle, move };
+  const setEditing = async (editing2) => {
+    _setEditing(editing2);
+  };
+  const value = { habits, empty, editing, setEditing, load, set, create, toggle, move };
   return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, children });
 }
 function useHabits() {
@@ -292,20 +298,21 @@ function App() {
         }
       ),
       /* @__PURE__ */ jsx(Links, {}),
-      /* @__PURE__ */ jsx(Meta, {})
+      /* @__PURE__ */ jsx(Meta, {}),
+      /* @__PURE__ */ jsx("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" })
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
-      /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-10", children: [
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { to: "/", children: /* @__PURE__ */ jsx(FaThList, { className: "ml-8 mt-1" }) }) }),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/metrics", children: "Metrics" }) }),
-        isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right col-span-7", children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
-        !isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right col-span-7", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
+      /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsxs("div", { className: "flex", children: [
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { to: "/", children: /* @__PURE__ */ jsx(FaThList, { className: "ml-8 mt-1 size-5" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
+        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/metrics", children: "Metrics" }) }),
+        isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
+        !isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
       ] }) }),
-      /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-9", children: [
-        /* @__PURE__ */ jsx("div", {}),
-        /* @__PURE__ */ jsx("div", { className: "col-span-7", children: /* @__PURE__ */ jsx(HabitsProvider, { children: /* @__PURE__ */ jsx(MetricsProvider, { children: /* @__PURE__ */ jsx(Outlet, {}) }) }) }),
-        /* @__PURE__ */ jsx("div", {})
+      /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
+        /* @__PURE__ */ jsx("div", { className: "lg:w-1/6" }),
+        /* @__PURE__ */ jsx("div", { className: "w-full lg:w-4/6", children: /* @__PURE__ */ jsx(HabitsProvider, { children: /* @__PURE__ */ jsx(MetricsProvider, { children: /* @__PURE__ */ jsx(Outlet, {}) }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "lg:w-1/6" })
       ] }),
       /* @__PURE__ */ jsx(Scripts, {})
     ] })
@@ -331,8 +338,6 @@ class HabitAreaChart extends PureComponent {
     return /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(
       AreaChart,
       {
-        width: 500,
-        height: 400,
         data: this.props.data,
         margin: {
           top: 10,
@@ -376,9 +381,9 @@ const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 }, Symbol.toStringTag, { value: "Module" }));
 const screen = "/assets/screen-01-BO3lyBWu.png";
 function Index() {
-  return /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2", children: [
-    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("img", { src: screen }) }),
-    /* @__PURE__ */ jsx("div", { className: "mt-10", children: /* @__PURE__ */ jsxs("blockquote", { className: "text-xl italic font-semibold text-gray-900 dark:text-white", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "lg:flex", children: [
+    /* @__PURE__ */ jsx("div", { className: "lg:w-2/3 sm:full-width", children: /* @__PURE__ */ jsx("img", { src: screen }) }),
+    /* @__PURE__ */ jsx("div", { className: "mt-10 lg:w-1/3 sm:full-width m-8 lg:m-1", children: /* @__PURE__ */ jsxs("blockquote", { className: "text-xl italic font-semibold text-gray-900 dark:text-white", children: [
       /* @__PURE__ */ jsx("svg", { className: "w-8 h-8 text-gray-400 dark:text-gray-600 mb-4", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "currentColor", viewBox: "0 0 18 14", children: /* @__PURE__ */ jsx("path", { d: "M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" }) }),
       /* @__PURE__ */ jsx("p", { className: "text-gray-400", children: "HabitTrack.me lets you track daily habits that you'd like to make a part of your routine. Its metrics allow you to see if you're meeting your goals week over week." })
     ] }) })
@@ -402,20 +407,75 @@ function HabitListItem(props) {
     await habits.toggle(props.id);
     await habits.load();
   }
-  async function handleDelete() {
+  async function handleEdit() {
     console.info(props.id);
+    habits.setEditing(true);
   }
   const style = {
     transform: CSS.Transform.toString(transform),
     transition
   };
-  return /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-12", ref: setNodeRef, style, ...attributes, children: [
-    /* @__PURE__ */ jsx("div", { className: "col-span-11 bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-12", children: [
-      /* @__PURE__ */ jsx("div", { ...listeners, children: props.disabled ? "" : /* @__PURE__ */ jsx(RxDragHandleHorizontal, { className: "mt-2" }) }),
-      /* @__PURE__ */ jsx("div", { className: "col-span-10 mt-0.5", children: props.name }),
-      /* @__PURE__ */ jsx("div", { className: "text-right", children: /* @__PURE__ */ jsx("input", { type: "checkbox", checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) })
-    ] }) }),
-    /* @__PURE__ */ jsx("div", { className: "col-span-1", children: props.disabled ? "" : /* @__PURE__ */ jsx("button", { onClick: handleDelete, children: /* @__PURE__ */ jsx(FaTrashAlt, { className: "mt-3 ml-3" }) }) })
+  return /* @__PURE__ */ jsx("div", { ref: setNodeRef, style, ...attributes, children: /* @__PURE__ */ jsxs("div", { className: "flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch", children: [
+    /* @__PURE__ */ jsx("div", { ...listeners, className: "w-8 mr-2", children: props.disabled ? "" : /* @__PURE__ */ jsx(RxDragHandleHorizontal, { className: "mt-1 size-6" }) }),
+    /* @__PURE__ */ jsx("div", { className: "w-5/6 mt-0.5", children: props.name }),
+    /* @__PURE__ */ jsx("div", { className: "w-1/6 text-right", children: /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-2/4" }),
+      /* @__PURE__ */ jsx("div", { className: "w-1/4", children: props.disabled ? "" : /* @__PURE__ */ jsx(FiEdit, { className: "mt-1 size-6", onClick: handleEdit }) }),
+      /* @__PURE__ */ jsx("div", { className: "w-1/4", children: /* @__PURE__ */ jsx("input", { type: "checkbox", checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) })
+    ] }) })
+  ] }) });
+}
+const DAY_LOOKUP = {
+  mon: "Monday",
+  tues: "Tuesday",
+  wed: "Wednesday",
+  thu: "Thursday",
+  fri: "Friday",
+  sat: "Saturday",
+  sun: "Sunday"
+};
+function HabitEdit() {
+  const habits = useHabits();
+  const [days, setDays] = React__default.useState({
+    mon: false,
+    tues: false,
+    wed: false,
+    thu: false,
+    fri: false,
+    sat: false,
+    sun: false
+  });
+  function cancel() {
+    habits.setEditing(false);
+  }
+  function toggleDay(e) {
+    days[e.target.dataset.day] = !days[e.target.dataset.day];
+    setDays((prevDays) => {
+      prevDays[e.target.dataset.day] = !days[e.target.dataset.day];
+      return { ...prevDays };
+    });
+  }
+  return /* @__PURE__ */ jsxs("div", { className: `relative z-10${habits.editing ? " visible" : " invisible"}`, "aria-labelledby": "modal-title", role: "dialog", "aria-modal": "true", children: [
+    /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" }),
+    /* @__PURE__ */ jsx("div", { className: "fixed inset-0 z-10 w-screen overflow-y-auto", children: /* @__PURE__ */ jsx("div", { className: "flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0", children: /* @__PURE__ */ jsxs("div", { className: "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", children: [
+      /* @__PURE__ */ jsx("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4", children: /* @__PURE__ */ jsxs("div", { className: "sm:flex sm:items-start", children: [
+        /* @__PURE__ */ jsx("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6 text-gray-800 dark:text-white", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", fill: "none", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" }) }) }),
+        /* @__PURE__ */ jsxs("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left", children: [
+          /* @__PURE__ */ jsx("h3", { className: "text-base font-semibold leading-6 text-gray-900", id: "modal-title", children: "Edit habit" }),
+          /* @__PURE__ */ jsxs("div", { className: "mt-2", children: [
+            /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }),
+            /* @__PURE__ */ jsx("ul", { className: "grid w-full grid-cols-2 gap-2 mt-5", children: Object.keys(days).map((day) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx("span", { "data-day": day, onClick: toggleDay, className: `inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600 dark:hover:text-white dark:border-blue-500 dark:peer-checked:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-600 hover:text-white peer-checked:text-white hover:bg-blue-500 dark:text-blue-500 dark:bg-gray-900 dark:hover:bg-blue-600 dark:hover:border-blue-600 dark:peer-checked:bg-blue-500${days[day] ? " dark:text-white text-white bg-blue-500 dark:bg-blue-600 dark:border-blue-600" : " bg-white"}`, children: DAY_LOOKUP[day] }) }, day)) })
+          ] })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "flex bg-gray-50 px-4 py-3 px-6", children: [
+        /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
+          /* @__PURE__ */ jsx("button", { type: "button", className: "mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white", children: "Save" }),
+          /* @__PURE__ */ jsx("button", { type: "button", onClick: cancel, className: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto", children: "Cancel" })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "w-full text-right", children: /* @__PURE__ */ jsx("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto sm:mt-0 sm-ml-0 ml-2 mt-3", children: "Delete" }) })
+      ] })
+    ] }) }) })
   ] });
 }
 async function loader$1({ request }) {
@@ -465,11 +525,12 @@ function Habits() {
     }
   }
   return /* @__PURE__ */ jsx(Suspense, { children: /* @__PURE__ */ jsxs(Await, { resolve: habits, children: [
+    /* @__PURE__ */ jsx(HabitEdit, {}),
     habits.empty ? /* @__PURE__ */ jsxs("div", { className: "border-dashed border-2 border-slate-100 grid grid-cols-3 p-10", children: [
       /* @__PURE__ */ jsx("div", {}),
       /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { children: [
         "You have not yet created your first daily habit. Enter a daily habit that you would like to start keeping into the text box below and click",
-        /* @__PURE__ */ jsx("span", { className: "text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded", children: "Add Habit" })
+        /* @__PURE__ */ jsx("span", { className: "text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap", children: "Add Habit" })
       ] }) }),
       /* @__PURE__ */ jsx("div", {})
     ] }) : "",
@@ -489,15 +550,14 @@ function Habits() {
         )
       }
     ),
-    sorting || habits.empty ? /* @__PURE__ */ jsxs("form", { onSubmit: createDailyHabit, className: "grid grid-cols-6 mt-3 w-11/12", children: [
-      /* @__PURE__ */ jsx("div", {}),
-      /* @__PURE__ */ jsx("div", { className: "col-span-4", children: /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }) }),
-      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "submit", value: "Add Habit", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" }) })
+    sorting || habits.empty ? /* @__PURE__ */ jsxs("form", { onSubmit: createDailyHabit, className: "flex w-full", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-4/6 mt-1", children: /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }) }),
+      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "submit", value: "Add Habit", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-full" }) })
     ] }) : "",
     /* @__PURE__ */ jsxs("label", { className: "mt-3 inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsx("input", { type: "checkbox", value: "", className: "sr-only peer", checked: sorting || habits.empty, onChange: handleChange }),
       /* @__PURE__ */ jsx("div", { className: "relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" }),
-      /* @__PURE__ */ jsx("span", { className: "ms-3 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Add / sort habits" })
+      /* @__PURE__ */ jsx("span", { className: "ms-3 text-base font-medium text-gray-900 dark:text-gray-300", children: "Add / edit habits" })
     ] })
   ] }) });
 }
@@ -537,11 +597,11 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-pHrvyN9K.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js", "/assets/index-DQPK0XfS.js", "/assets/components-Ksei8bJt.js", "/assets/performance-ED7MkbMs.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BF1nzoo8.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js", "/assets/index-DQPK0XfS.js", "/assets/components-Ksei8bJt.js", "/assets/performance-ED7MkbMs.js", "/assets/habits-CoJB1GUe.js", "/assets/metrics-DLau6FOZ.js", "/assets/index-BwfpGmH1.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-eYqsaVNN.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js", "/assets/index-DQPK0XfS.js", "/assets/metrics-DLau6FOZ.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-BVJzXbK8.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-D2T-tKaX.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js", "/assets/components-Ksei8bJt.js", "/assets/index-BwfpGmH1.js", "/assets/habits-CoJB1GUe.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-DkjZjYxt.js", "imports": ["/assets/jsx-runtime-CKQyCzpV.js", "/assets/index-BwfpGmH1.js", "/assets/components-Ksei8bJt.js"], "css": [] } }, "url": "/assets/manifest-7989d1e0.js", "version": "7989d1e0" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DnLnNXtd.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js", "/assets/index-BioeIMTo.js", "/assets/components-BLhcBXLz.js", "/assets/performance-Bm0WIlNe.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BI_JNtXe.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js", "/assets/index-BioeIMTo.js", "/assets/components-BLhcBXLz.js", "/assets/performance-Bm0WIlNe.js", "/assets/iconBase-CmnrUXSg.js", "/assets/habits-j5W6WtxL.js", "/assets/metrics-CY-RhXzO.js", "/assets/index-BbGNxAzt.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-BAp4p2lc.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js", "/assets/index-BioeIMTo.js", "/assets/metrics-CY-RhXzO.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-3NEVbK8W.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-B7kH1p8w.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js", "/assets/components-BLhcBXLz.js", "/assets/iconBase-CmnrUXSg.js", "/assets/habits-j5W6WtxL.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-YA-LtDel.js", "imports": ["/assets/jsx-runtime-lXcw5n3p.js", "/assets/iconBase-CmnrUXSg.js", "/assets/index-BbGNxAzt.js", "/assets/components-BLhcBXLz.js"], "css": [] } }, "url": "/assets/manifest-f6be69c1.js", "version": "f6be69c1" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
-const future = { "v3_fetcherPersist": false, "v3_relativeSplatPath": false, "v3_throwAbortReason": false };
+const future = { "v3_fetcherPersist": false, "v3_relativeSplatPath": false, "v3_throwAbortReason": false, "unstable_singleFetch": false };
 const isSpaMode = false;
 const publicPath = "/";
 const entry = { module: entryServer };
