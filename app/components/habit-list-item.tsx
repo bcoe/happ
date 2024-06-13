@@ -2,7 +2,7 @@ import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { RxDragHandleHorizontal } from "react-icons/rx";
-// import { FaTrashAlt } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
 import { useHabits } from '../providers/habits';
 
 export function HabitListItem(props) {
@@ -21,8 +21,9 @@ export function HabitListItem(props) {
     await habits.load();
   }
 
-  async function handleDelete() {
+  async function handleEdit() {
     console.info(props.id);
+    habits.setEditing(true);
   }
   
   const style = {
@@ -31,7 +32,7 @@ export function HabitListItem(props) {
   };
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <div className='flex w-full bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
+      <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
         <div {...listeners} className="w-8 mr-2">
           {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
         </div>
@@ -39,7 +40,15 @@ export function HabitListItem(props) {
           {props.name}
         </div>
         <div className='w-1/6 text-right'>
-          <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+          <div className="flex w-full">
+            <div className='w-2/4' />
+            <div className='w-1/4'>
+              {props.disabled ? '' : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
+            </div>
+            <div className='w-1/4'>
+              <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

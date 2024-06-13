@@ -11,6 +11,8 @@ export interface HabitType {
 interface HabitsType {
   habits: Array<HabitType>; 
   empty: boolean;
+  editing: boolean;
+  setEditing: (editing: boolean) => Promise<void>;
   load: () => Promise<void>;
   create: (name: string) => Promise<void>;
   set: (habits: Array<HabitType>) => {};
@@ -23,6 +25,7 @@ const HabitsContext = React.createContext<HabitsType>(null!);
 export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [habits, setHabits] =  React.useState<Array<HabitType>>([]);
   const [empty, setEmpty] = React.useState<boolean>(false);
+  const [editing, _setEditing] = React.useState<boolean>(false);
 
   const set = (habits: Array<HabitType>) => {
     setHabits([...habits]);
@@ -105,7 +108,11 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     set(habits);
   }
 
-  const value = { habits, empty, load, set, create, toggle, move };
+  const setEditing = async (editing: boolean) => {
+    _setEditing(editing);
+  }
+
+  const value = { habits, empty, editing, setEditing, load, set, create, toggle, move };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }
