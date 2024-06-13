@@ -17,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { HabitListItem } from '../components/habit-list-item';
+import { HabitEdit } from '../components/habit-edit';
 import { useHabits } from '../providers/habits';
 
 export async function loader({request}) {
@@ -75,6 +76,7 @@ export default function Habits() {
   return (
     <Suspense>
         <Await resolve={habits}>
+          <HabitEdit />
           {habits.empty ? (
               <div className={'border-dashed border-2 border-slate-100 grid grid-cols-3 p-10'}>
                 <div></div>
