@@ -7,9 +7,9 @@ const URLs = [
   'http://localhost:3000/v1/test-statuses',
   'http://localhost:3000/v1/test-statuses',
   'http://localhost:3000/v1/test-statuses',
-  'http://localhost:3000/v1/test-post',
-  'http://localhost:3000/v1/test-post',
-  'http://localhost:3000/v1/test-post',
+  'http://localhost:3000/v1/ml-workflow',
+  'http://localhost:3000/v1/ml-workflow',
+  'http://localhost:3000/v1/ml-workflow',
 ];
 setInterval(async ()  => {
   const url = URLs[parseInt(Math.random() * URLs.length)];
