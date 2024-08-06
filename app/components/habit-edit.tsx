@@ -42,13 +42,13 @@ export function HabitEdit() {
   }
 
   function toggleDay(e) {
-    days[e.target.dataset.day] = !days[e.target.dataset.day];
+    const toggledDay = !days[e.target.dataset.day];
     setDays(prevDays => {
-      prevDays[e.target.dataset.day] = !days[e.target.dataset.day];
-      return {...prevDays};
+      prevDays[e.target.dataset.day] = toggledDay;
+      return {...prevDays}
     });
   }
-  
+
   return (
     <div className={`relative z-10${habits.editing ? ' visible' : ' invisible'}`} aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
