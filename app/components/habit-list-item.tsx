@@ -27,7 +27,8 @@ export function HabitListItem(props) {
   }
 
   function hideRow() {
-    return props.disabled === true && props.days[habits.currentDayOfWeek] === false;
+    const habitAppliesToDay = !props.days || props.days[habits.currentDayOfWeek];
+    return props.disabled === true && habitAppliesToDay === false;
   }
 
   const style = {
