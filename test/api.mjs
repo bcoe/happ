@@ -120,7 +120,7 @@ describe('api', () => {
       });
       assert.strictEqual(resp.status, 200);
       const habits = await resp.json();
-      assert.strictEqual(habits.length, 2);
+      assert.strictEqual(habits.habits.length, 2);
     });
   });
 

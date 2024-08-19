@@ -18,26 +18,16 @@ import {
 } from '@dnd-kit/sortable';
 import { HabitListItem } from '../components/habit-list-item';
 import { HabitEdit } from '../components/habit-edit';
-import { useHabits } from '../providers/habits';
-
-type DayToggles = {
-  mon: boolean;
-  tues: boolean;
-  wed: boolean;
-  thu: boolean;
-  fri: boolean;
-  sat: boolean;
-  sun: boolean;
-};
+import { useHabits, DayToggles } from '../providers/habits';
 
 const DAY_LOOKUP = {
-  mon: 'Mon',
-  tues: 'Tue',
-  wed: 'Wed',
-  thu: 'Thu',
-  fri: 'Fri',
-  sat: 'Sat',
-  sun: 'Sun'
+  Mon: 'Mon',
+  Tue: 'Tue',
+  Wed: 'Wed',
+  Thu: 'Thu',
+  Fri: 'Fri',
+  Sat: 'Sat',
+  Sun: 'Sun'
 };
 
 export async function loader({request}) {
@@ -50,13 +40,13 @@ export default function Habits() {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [sorting, setSorting] = useState<boolean>(false);
   const [days, setDays] = React.useState<DayToggles>({
-    mon: false,
-    tues: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false,
-    sun: false
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false
   });
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -74,7 +64,7 @@ export default function Habits() {
   async function createDailyHabit(e) {
     e.preventDefault();
     const name = e.target.name.value;
-    await habits.create(name);
+    await habits.create(name, days);
     await habits.load();
     e.target.reset();
   }
@@ -96,7 +86,10 @@ export default function Habits() {
       }
     }
     if (oldIndex !== newIndex) {
-      habits.set(arrayMove(habits.habits, oldIndex, newIndex));
+      habits.set({
+        habits: arrayMove(habits.habits, oldIndex, newIndex),
+        current_dow: habits.currentDayOfWeek
+      });
       await habits.move(oldIndex, newIndex);
       await habits.load();
     }
@@ -136,7 +129,7 @@ export default function Habits() {
               items={habits.habits}
               strategy={verticalListSortingStrategy}
             >
-              {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} disabled={!sorting} />)}
+              {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} days={habit.days} disabled={!sorting} />)}
             </SortableContext>
           </DndContext>
           {(sorting || habits.empty) ? (
@@ -149,7 +142,7 @@ export default function Habits() {
               </div>
               <ul className='flex w-full'>
                 {Object.keys(days).map((day, i) => (
-                  <li data-day={day} onClick={toggleDay} className={`p-1 ${i === 0 ? '' : 'ml-1'} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
+                  <li data-day={day} key={day} onClick={toggleDay} className={`p-1 ${i === 0 ? '' : 'ml-1'} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
                     {DAY_LOOKUP[day]}
                   </li>
                 ))}

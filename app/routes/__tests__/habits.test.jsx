@@ -24,7 +24,8 @@ test("renders habits", async () => {
   ]);
   render(
     <HabitsProvider testValue={{
-      habits: [{id: 'abc123', habit_id: 'abc123', name: 'be awesome'}],
+      habits: [{id: 'abc123', habit_id: 'abc123', name: 'be awesome', days: {Mon: true}}],
+      currentDayOfWeek: 'Mon',
       load: async () => {}
     }}>
       <HabitStub />

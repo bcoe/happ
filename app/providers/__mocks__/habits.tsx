@@ -5,11 +5,16 @@ export interface HabitType {
   id: string;
 }
 
+export interface HabitResponse {
+  current_dow: string;
+  habits: Array<HabitType>;
+}
+
 interface HabitsType {
   habits: Array<HabitType>;
   load: () => Promise<void>;
   create: (type: string) => Promise<void>;
-  set: (habits: Array<HabitType>) => {};
+  set: (habits: HabitResponse) => {};
   remove: (prefix: string, created: number) => Promise<void>;
 }
 
@@ -21,7 +26,7 @@ export type Props = {
 interface HabitsType {
   habits: Array<HabitType>;
   create: (type: string) => Promise<void>;
-  set: (habits: Array<HabitType>) => {};
+  set: (habits: HabitResponse) => {};
   remove: (prefix: string, created: number) => Promise<void>;
 }
 

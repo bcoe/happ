@@ -1,40 +1,26 @@
 import React from 'react';
-import {useSortable} from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
-import { RxDragHandleHorizontal } from "react-icons/rx";
-// import { FaTrashAlt } from "react-icons/fa";
-import { useHabits } from '../providers/habits';
-
-type DayToggles = {
-  mon: boolean;
-  tues: boolean;
-  wed: boolean;
-  thu: boolean;
-  fri: boolean;
-  sat: boolean;
-  sun: boolean;
-};
+import { useHabits, DayToggles } from '../providers/habits';
 
 const DAY_LOOKUP = {
-  mon: 'Monday',
-  tues: 'Tuesday',
-  wed: 'Wednesday',
-  thu: 'Thursday',
-  fri: 'Friday',
-  sat: 'Saturday',
-  sun: 'Sunday'
+  Mon: 'Monday',
+  Tue: 'Tuesday',
+  Wed: 'Wednesday',
+  Thu: 'Thursday',
+  Fri: 'Friday',
+  Sat: 'Saturday',
+  Sun: 'Sunday'
 };
 
 export function HabitEdit() {
   const habits = useHabits();
   const [days, setDays] = React.useState<DayToggles>({
-    mon: false,
-    tues: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false,
-    sun: false
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false
   });
 
   function cancel() {

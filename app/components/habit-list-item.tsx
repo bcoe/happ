@@ -25,29 +25,35 @@ export function HabitListItem(props) {
     console.info(props.id);
     habits.setEditing(true);
   }
-  
+
+  function hideRow() {
+    return props.disabled === true && props.days[habits.currentDayOfWeek] === false;
+  }
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
-        <div {...listeners} className="w-8 mr-2">
-          {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
-        </div>
-        <div className='w-5/6 mt-0.5'>
-          {props.name}
-        </div>
-        <div className='w-1/6 text-right'>
-          <div className="flex w-full">
-            <div className='w-2/4' />
-            <div className='w-2/4'>
-              {props.disabled ? <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} /> : <FiEdit className='mt-1 ml-10 size-6'  onClick={handleEdit} />}
+    hideRow() ? '' : (
+      <div ref={setNodeRef} style={style} {...attributes}>
+        <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
+          <div {...listeners} className="w-8 mr-2">
+            {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
+          </div>
+          <div className='w-5/6 mt-0.5'>
+            {props.name}
+          </div>
+          <div className='w-1/6 text-right'>
+            <div className="flex w-full">
+              <div className='w-2/4' />
+              <div className='w-2/4'>
+                {props.disabled ? <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} /> : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    )
   );
 }
