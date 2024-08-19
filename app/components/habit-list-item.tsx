@@ -42,11 +42,8 @@ export function HabitListItem(props) {
         <div className='w-1/6 text-right'>
           <div className="flex w-full">
             <div className='w-2/4' />
-            <div className='w-1/4'>
-              {props.disabled ? '' : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
-            </div>
-            <div className='w-1/4'>
-              <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+            <div className='w-2/4'>
+              {props.disabled ? <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} /> : <FiEdit className='mt-1 ml-10 size-6'  onClick={handleEdit} />}
             </div>
           </div>
         </div>

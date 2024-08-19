@@ -148,8 +148,8 @@ export default function Habits() {
                 <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-2/6' />
               </div>
               <ul className='flex w-full'>
-                {Object.keys(days).map(day => (
-                  <li data-day={day} onClick={toggleDay} className={`p-1 ml-1 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600 dark:border-blue-500 dark:peer-checked:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white  dark:text-blue-500 dark:bg-gray-900 dark:peer-checked:bg-blue-500${days[day] ? ' dark:text-white text-white bg-blue-500 dark:bg-blue-600 dark:border-blue-600' : ' bg-white'}`}>
+                {Object.keys(days).map((day, i) => (
+                  <li data-day={day} onClick={toggleDay} className={`p-1 ${i === 0 ? '' : 'ml-1'} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
                     {DAY_LOOKUP[day]}
                   </li>
                 ))}

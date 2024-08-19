@@ -69,7 +69,7 @@ export function HabitEdit() {
                     <ul className="grid w-full grid-cols-2 gap-2 mt-5">
                       {Object.keys(days).map(day => (
                         <li key={day}>
-                          <span data-day={day} onClick={toggleDay} className={`inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600 dark:border-blue-500 dark:peer-checked:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white dark:text-blue-500 dark:bg-gray-900  dark:peer-checked:bg-blue-500${days[day] ? ' dark:text-white text-white bg-blue-500 dark:bg-blue-600 dark:border-blue-600' : ' bg-white'}`}>
+                          <span data-day={day} onClick={toggleDay} className={`inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
                             {DAY_LOOKUP[day]}
                           </span>
                         </li>
