@@ -22,8 +22,7 @@ export function HabitListItem(props) {
   }
 
   async function handleEdit() {
-    console.info(props.id);
-    habits.setEditing(true);
+    habits.setEditing(true, props.id);
   }
 
   function hideRow() {

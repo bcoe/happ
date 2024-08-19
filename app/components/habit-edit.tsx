@@ -1,5 +1,6 @@
 import React from 'react';
-import { useHabits, DayToggles } from '../providers/habits';
+import { useEffect } from 'react';
+import { useHabits, DayToggles, NO_DAYS_SET } from '../providers/habits';
 
 const DAY_LOOKUP = {
   Mon: 'Monday',
@@ -13,18 +14,18 @@ const DAY_LOOKUP = {
 
 export function HabitEdit() {
   const habits = useHabits();
-  const [days, setDays] = React.useState<DayToggles>({
-    Mon: false,
-    Tue: false,
-    Wed: false,
-    Thu: false,
-    Fri: false,
-    Sat: false,
-    Sun: false
-  });
+  const [id, setId] = React.useState<string>('');
+  const [name, setName] = React.useState<string>('');
+  const [days, setDays] = React.useState<DayToggles>(NO_DAYS_SET);
 
   function cancel() {
-    habits.setEditing(false);
+    habits.setEditing(false, undefined);
+  }
+
+  async function save() { 
+    await habits.update(id, name, days);
+    await habits.load();
+    habits.setEditing(false, undefined);
   }
 
   function toggleDay(e) {
@@ -34,6 +35,22 @@ export function HabitEdit() {
       return {...prevDays}
     });
   }
+
+  useEffect(() => {
+    if (habits.editing && habits.currentlyEditing) {
+      setId(habits.currentlyEditing.id);
+      setName(habits.currentlyEditing.name);
+      let allDaysSet = true;
+      for (const toggle of Object.values(habits.currentlyEditing.days)) {
+        if (!toggle) allDaysSet = false;
+      }
+      if (!allDaysSet) {
+        setDays(JSON.parse(JSON.stringify(habits.currentlyEditing.days)));
+      } else {
+        setDays(JSON.parse(JSON.stringify(NO_DAYS_SET)));
+      }
+    }
+  },[habits.editing]);
 
   return (
     <div className={`relative z-10${habits.editing ? ' visible' : ' invisible'}`} aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -51,7 +68,7 @@ export function HabitEdit() {
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Edit habit</h3>
                   <div className="mt-2">
-                    <input autoComplete={'off'} name="name" type="text" className='block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
+                    <input autoComplete={'off'} name="name" type="text" className='block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' value={name} onChange={e => setName(e.target.value)} />
                     <ul className="grid w-full grid-cols-2 gap-2 mt-5">
                       {Object.keys(days).map(day => (
                         <li key={day}>
@@ -67,7 +84,7 @@ export function HabitEdit() {
             </div>
             <div className="flex bg-gray-50 px-4 py-3 px-6">
               <div className="w-full">
-                <button type="button" className="mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white">Save</button>
+                <button type="button" onClick={save} className="mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white">Save</button>
                 <button type="button" onClick={cancel} className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
               </div>
               <div className="w-full text-right">

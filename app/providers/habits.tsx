@@ -10,6 +10,26 @@ export type DayToggles = {
   Sun: boolean;
 };
 
+export const NO_DAYS_SET = {
+  Mon: false,
+  Tue: false,
+  Wed: false,
+  Thu: false,
+  Fri: false,
+  Sat: false,
+  Sun: false
+};
+
+export const ALL_DAYS_SET = {
+  Mon: true,
+  Tue: true,
+  Wed: true,
+  Thu: true,
+  Fri: true,
+  Sat: true,
+  Sun: true
+};
+
 export interface HabitType {
   name: string;
   days: DayToggles,
@@ -29,9 +49,11 @@ interface HabitsType {
   empty: boolean;
   currentDayOfWeek: string;
   editing: boolean;
-  setEditing: (editing: boolean) => Promise<void>;
+  currentlyEditing?: HabitType;
+  setEditing: (editing: boolean, id: string | undefined) => Promise<void>;
   load: () => Promise<void>;
   create: (name: string, days: DayToggles) => Promise<void>;
+  update: (id: string, name: string, days: DayToggles) => Promise<void>;
   set: (habits: HabitResponse) => {};
   toggle: (id: string) => Promise<void>;
   move: (oldIndex: number, newIndex: number) => Promise<void>;
@@ -40,10 +62,11 @@ interface HabitsType {
 const HabitsContext = React.createContext<HabitsType>(null!);
 
 export function HabitsProvider({ children }: { children: React.ReactNode }) {
-  const [habits, setHabits] =  React.useState<Array<HabitType>>([]);
+  const [habits, setHabits] = React.useState<Array<HabitType>>([]);
   const [empty, setEmpty] = React.useState<boolean>(false);
   const [currentDayOfWeek, setCurrentDayOfWeek] = React.useState<string>('');
   const [editing, _setEditing] = React.useState<boolean>(false);
+  const [currentlyEditing, setCurrentlyEditing] = React.useState<HabitType | undefined>(undefined);
 
   const set = (habits: HabitResponse) => {
     setHabits([...habits.habits]);
@@ -63,6 +86,20 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({name, days: hasDaysSet ? days : undefined})
+    });
+  }
+
+  const update = async (id: string, name: string, days: DayToggles) => {
+    let hasDaysSet = false;
+    for (const toggle of Object.values(days)) {
+      if (toggle) hasDaysSet = true;
+    }
+    await fetch(`/v1/habits/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name, days: hasDaysSet ? days : ALL_DAYS_SET})
     });
   }
 
@@ -106,11 +143,18 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     set(habits);
   }
 
-  const setEditing = async (editing: boolean) => {
+  const setEditing = async (editing: boolean, id: string | undefined) => {
+    if (id) {
+      setCurrentlyEditing(habits.find(h => {
+        return h.id === id;
+      }));
+    } else {
+      setCurrentlyEditing(undefined);
+    }
     _setEditing(editing);
   }
 
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, load, set, create, toggle, move };
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, toggle, move };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }
