@@ -41,8 +41,11 @@ export function HabitEdit() {
       setId(habits.currentlyEditing.id);
       setName(habits.currentlyEditing.name);
       let allDaysSet = true;
-      for (const toggle of Object.values(habits.currentlyEditing.days)) {
-        if (!toggle) allDaysSet = false;
+      // Handle the case where the days is null:
+      if (habits.currentlyEditing.days) {
+        for (const toggle of Object.values(habits.currentlyEditing.days)) {
+          if (!toggle) allDaysSet = false;
+        }
       }
       if (!allDaysSet) {
         setDays(JSON.parse(JSON.stringify(habits.currentlyEditing.days)));
