@@ -20,6 +20,26 @@ import { HabitListItem } from '../components/habit-list-item';
 import { HabitEdit } from '../components/habit-edit';
 import { useHabits } from '../providers/habits';
 
+type DayToggles = {
+  mon: boolean;
+  tues: boolean;
+  wed: boolean;
+  thu: boolean;
+  fri: boolean;
+  sat: boolean;
+  sun: boolean;
+};
+
+const DAY_LOOKUP = {
+  mon: 'Mon',
+  tues: 'Tue',
+  wed: 'Wed',
+  thu: 'Thu',
+  fri: 'Fri',
+  sat: 'Sat',
+  sun: 'Sun'
+};
+
 export async function loader({request}) {
   await requireUserId(request);
   return {}
@@ -29,6 +49,15 @@ export default function Habits() {
   const habits = useHabits();
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [sorting, setSorting] = useState<boolean>(false);
+  const [days, setDays] = React.useState<DayToggles>({
+    mon: false,
+    tues: false,
+    wed: false,
+    thu: false,
+    fri: false,
+    sat: false,
+    sun: false
+  });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -72,6 +101,14 @@ export default function Habits() {
       await habits.load();
     }
   }
+  
+  function toggleDay(e) {
+    const toggledDay = !days[e.target.dataset.day];
+    setDays(prevDays => {
+      prevDays[e.target.dataset.day] = toggledDay;
+      return {...prevDays}
+    });
+  }
 
   return (
     <Suspense>
@@ -103,13 +140,20 @@ export default function Habits() {
             </SortableContext>
           </DndContext>
           {(sorting || habits.empty) ? (
-            <form onSubmit={createDailyHabit} className='flex w-full'>
-              <div className='w-4/6 mt-1'>
-                <input autoComplete={'off'} name="name" type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
+            <form onSubmit={createDailyHabit}>
+              <div className='flex w-full'>
+                <div className='w-4/6 mt-1'>
+                  <input autoComplete={'off'} name="name" type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
+                </div>
+                <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-2/6' />
               </div>
-              <div>
-                <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-full' />
-              </div>
+              <ul className='flex w-full'>
+                {Object.keys(days).map(day => (
+                  <li data-day={day} onClick={toggleDay} className={`p-1 ml-1 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600 dark:border-blue-500 dark:peer-checked:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white  dark:text-blue-500 dark:bg-gray-900 dark:peer-checked:bg-blue-500${days[day] ? ' dark:text-white text-white bg-blue-500 dark:bg-blue-600 dark:border-blue-600' : ' bg-white'}`}>
+                    {DAY_LOOKUP[day]}
+                  </li>
+                ))}
+              </ul>
             </form>
           ) : ''}
           <label className="mt-3 inline-flex items-center cursor-pointer">
