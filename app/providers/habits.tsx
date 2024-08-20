@@ -58,6 +58,8 @@ interface HabitsType {
   set: (habits: HabitResponse) => {};
   toggle: (id: string) => Promise<void>;
   move: (oldIndex: number, newIndex: number) => Promise<void>;
+  // Notes CRUD:
+  createNote: (note: string) => Promise<void>;
 }
 
 const HabitsContext = React.createContext<HabitsType>(null!);
@@ -164,7 +166,19 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     _setEditing(editing);
   }
 
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move };
+  // Add notes to your day that you can come back and reference in the future. Why did I have trouble making it
+  // to the gym on August 1st 2024?
+  const createNote = async (note: string) => {
+    await fetch('/v1/notes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({note})
+    });
+  };
+
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move, createNote };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }
