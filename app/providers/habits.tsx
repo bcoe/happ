@@ -54,6 +54,7 @@ interface HabitsType {
   load: () => Promise<void>;
   create: (name: string, days: DayToggles) => Promise<void>;
   update: (id: string, name: string, days: DayToggles) => Promise<void>;
+  del: (id: string) => Promise<void>;
   set: (habits: HabitResponse) => {};
   toggle: (id: string) => Promise<void>;
   move: (oldIndex: number, newIndex: number) => Promise<void>;
@@ -100,6 +101,15 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({name, days: hasDaysSet ? days : ALL_DAYS_SET})
+    });
+  }
+
+  const del = async (id: string) => {
+    await fetch(`/v1/habits/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 
@@ -154,7 +164,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     _setEditing(editing);
   }
 
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, toggle, move };
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }
