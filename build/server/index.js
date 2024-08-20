@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "462a9e8b-309b-48e7-a427-c1ce48bf2f90", e._sentryDebugIdIdentifier = "sentry-dbid-462a9e8b-309b-48e7-a427-c1ce48bf2f90");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "290b5287-0c08-4794-8bc3-b08bbccded90", e._sentryDebugIdIdentifier = "sentry-dbid-290b5287-0c08-4794-8bc3-b08bbccded90");
   } catch (e2) {
   }
 }();
@@ -138,26 +138,66 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-B1YQ5w_R.css";
+const styles = "/assets/shared-BJD3h5m-.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "ab6f8e2e2dfafe625a04d57815dfbcf47325eae2" };
+_global.SENTRY_RELEASE = { id: "4e78c80a62ef592dda924c9c5ff861d62e8fd01c" };
+const NO_DAYS_SET = {
+  Mon: false,
+  Tue: false,
+  Wed: false,
+  Thu: false,
+  Fri: false,
+  Sat: false,
+  Sun: false
+};
+const ALL_DAYS_SET = {
+  Mon: true,
+  Tue: true,
+  Wed: true,
+  Thu: true,
+  Fri: true,
+  Sat: true,
+  Sun: true
+};
 const HabitsContext = React.createContext(null);
 function HabitsProvider({ children }) {
   const [habits, setHabits] = React.useState([]);
   const [empty, setEmpty] = React.useState(false);
+  const [currentDayOfWeek, setCurrentDayOfWeek] = React.useState("");
   const [editing, _setEditing] = React.useState(false);
+  const [currentlyEditing, setCurrentlyEditing] = React.useState(void 0);
   const set = (habits2) => {
-    setHabits([...habits2]);
-    setEmpty(!habits2.length);
+    setHabits([...habits2.habits]);
+    setEmpty(!habits2.habits.length);
+    setCurrentDayOfWeek(habits2.current_dow);
     return {};
   };
-  const create = async (name) => {
+  const create = async (name, days) => {
+    let hasDaysSet = false;
+    for (const toggle2 of Object.values(days)) {
+      if (toggle2)
+        hasDaysSet = true;
+    }
     await fetch("/v1/habits", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name, days: hasDaysSet ? days : void 0 })
+    });
+  };
+  const update = async (id, name, days) => {
+    let hasDaysSet = false;
+    for (const toggle2 of Object.values(days)) {
+      if (toggle2)
+        hasDaysSet = true;
+    }
+    await fetch(`/v1/habits/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, days: hasDaysSet ? days : ALL_DAYS_SET })
     });
   };
   const toggle = async (id) => {
@@ -194,15 +234,22 @@ function HabitsProvider({ children }) {
   const load = async () => {
     const resp = await fetch("/v1/habits-daily");
     const habits2 = await resp.json();
-    habits2.map((h) => {
+    habits2.habits.map((h) => {
       h.id = h.habit_id;
     });
     set(habits2);
   };
-  const setEditing = async (editing2) => {
+  const setEditing = async (editing2, id) => {
+    if (id) {
+      setCurrentlyEditing(habits.find((h) => {
+        return h.id === id;
+      }));
+    } else {
+      setCurrentlyEditing(void 0);
+    }
     _setEditing(editing2);
   };
-  const value = { habits, empty, editing, setEditing, load, set, create, toggle, move };
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, toggle, move };
   return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, children });
 }
 function useHabits() {
@@ -408,53 +455,72 @@ function HabitListItem(props) {
     await habits.load();
   }
   async function handleEdit() {
-    console.info(props.id);
-    habits.setEditing(true);
+    habits.setEditing(true, props.id);
+  }
+  function hideRow() {
+    const habitAppliesToDay = !props.days || props.days[habits.currentDayOfWeek];
+    return props.disabled === true && habitAppliesToDay === false;
   }
   const style = {
     transform: CSS.Transform.toString(transform),
     transition
   };
-  return /* @__PURE__ */ jsx("div", { ref: setNodeRef, style, ...attributes, children: /* @__PURE__ */ jsxs("div", { className: "flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch", children: [
+  return hideRow() ? "" : /* @__PURE__ */ jsx("div", { ref: setNodeRef, style, ...attributes, children: /* @__PURE__ */ jsxs("div", { className: "flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch", children: [
     /* @__PURE__ */ jsx("div", { ...listeners, className: "w-8 mr-2", children: props.disabled ? "" : /* @__PURE__ */ jsx(RxDragHandleHorizontal, { className: "mt-1 size-6" }) }),
     /* @__PURE__ */ jsx("div", { className: "w-5/6 mt-0.5", children: props.name }),
     /* @__PURE__ */ jsx("div", { className: "w-1/6 text-right", children: /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
       /* @__PURE__ */ jsx("div", { className: "w-2/4" }),
-      /* @__PURE__ */ jsx("div", { className: "w-1/4", children: props.disabled ? "" : /* @__PURE__ */ jsx(FiEdit, { className: "mt-1 size-6", onClick: handleEdit }) }),
-      /* @__PURE__ */ jsx("div", { className: "w-1/4", children: /* @__PURE__ */ jsx("input", { type: "checkbox", checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) })
+      /* @__PURE__ */ jsx("div", { className: "w-2/4", children: props.disabled ? /* @__PURE__ */ jsx("input", { type: "checkbox", checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) : /* @__PURE__ */ jsx(FiEdit, { className: "mt-1 size-6", onClick: handleEdit }) })
     ] }) })
   ] }) });
 }
-const DAY_LOOKUP = {
-  mon: "Monday",
-  tues: "Tuesday",
-  wed: "Wednesday",
-  thu: "Thursday",
-  fri: "Friday",
-  sat: "Saturday",
-  sun: "Sunday"
+const DAY_LOOKUP$1 = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday"
 };
 function HabitEdit() {
   const habits = useHabits();
-  const [days, setDays] = React__default.useState({
-    mon: false,
-    tues: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false,
-    sun: false
-  });
+  const [id, setId] = React__default.useState("");
+  const [name, setName] = React__default.useState("");
+  const [days, setDays] = React__default.useState(NO_DAYS_SET);
   function cancel() {
-    habits.setEditing(false);
+    habits.setEditing(false, void 0);
+  }
+  async function save() {
+    await habits.update(id, name, days);
+    await habits.load();
+    habits.setEditing(false, void 0);
   }
   function toggleDay(e) {
-    days[e.target.dataset.day] = !days[e.target.dataset.day];
+    const toggledDay = !days[e.target.dataset.day];
     setDays((prevDays) => {
-      prevDays[e.target.dataset.day] = !days[e.target.dataset.day];
+      prevDays[e.target.dataset.day] = toggledDay;
       return { ...prevDays };
     });
   }
+  useEffect(() => {
+    if (habits.editing && habits.currentlyEditing) {
+      setId(habits.currentlyEditing.id);
+      setName(habits.currentlyEditing.name);
+      let allDaysSet = true;
+      if (habits.currentlyEditing.days) {
+        for (const toggle of Object.values(habits.currentlyEditing.days)) {
+          if (!toggle)
+            allDaysSet = false;
+        }
+      }
+      if (!allDaysSet) {
+        setDays(JSON.parse(JSON.stringify(habits.currentlyEditing.days)));
+      } else {
+        setDays(JSON.parse(JSON.stringify(NO_DAYS_SET)));
+      }
+    }
+  }, [habits.editing]);
   return /* @__PURE__ */ jsxs("div", { className: `relative z-10${habits.editing ? " visible" : " invisible"}`, "aria-labelledby": "modal-title", role: "dialog", "aria-modal": "true", children: [
     /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" }),
     /* @__PURE__ */ jsx("div", { className: "fixed inset-0 z-10 w-screen overflow-y-auto", children: /* @__PURE__ */ jsx("div", { className: "flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0", children: /* @__PURE__ */ jsxs("div", { className: "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", children: [
@@ -463,14 +529,14 @@ function HabitEdit() {
         /* @__PURE__ */ jsxs("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left", children: [
           /* @__PURE__ */ jsx("h3", { className: "text-base font-semibold leading-6 text-gray-900", id: "modal-title", children: "Edit habit" }),
           /* @__PURE__ */ jsxs("div", { className: "mt-2", children: [
-            /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }),
-            /* @__PURE__ */ jsx("ul", { className: "grid w-full grid-cols-2 gap-2 mt-5", children: Object.keys(days).map((day) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx("span", { "data-day": day, onClick: toggleDay, className: `inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600 dark:hover:text-white dark:border-blue-500 dark:peer-checked:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-600 hover:text-white peer-checked:text-white hover:bg-blue-500 dark:text-blue-500 dark:bg-gray-900 dark:hover:bg-blue-600 dark:hover:border-blue-600 dark:peer-checked:bg-blue-500${days[day] ? " dark:text-white text-white bg-blue-500 dark:bg-blue-600 dark:border-blue-600" : " bg-white"}`, children: DAY_LOOKUP[day] }) }, day)) })
+            /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline", value: name, onChange: (e) => setName(e.target.value) }),
+            /* @__PURE__ */ jsx("ul", { className: "grid w-full grid-cols-2 gap-2 mt-5", children: Object.keys(days).map((day) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx("span", { "data-day": day, onClick: toggleDay, className: `inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? " text-white bg-blue-500" : " bg-white"}`, children: DAY_LOOKUP$1[day] }) }, day)) })
           ] })
         ] })
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "flex bg-gray-50 px-4 py-3 px-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
-          /* @__PURE__ */ jsx("button", { type: "button", className: "mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white", children: "Save" }),
+          /* @__PURE__ */ jsx("button", { type: "button", onClick: save, className: "mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white", children: "Save" }),
           /* @__PURE__ */ jsx("button", { type: "button", onClick: cancel, className: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto", children: "Cancel" })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "w-full text-right", children: /* @__PURE__ */ jsx("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto sm:mt-0 sm-ml-0 ml-2 mt-3", children: "Delete" }) })
@@ -478,6 +544,15 @@ function HabitEdit() {
     ] }) }) })
   ] });
 }
+const DAY_LOOKUP = {
+  Mon: "Mon",
+  Tue: "Tue",
+  Wed: "Wed",
+  Thu: "Thu",
+  Fri: "Fri",
+  Sat: "Sat",
+  Sun: "Sun"
+};
 async function loader$1({ request }) {
   await requireUserId(request);
   return {};
@@ -486,6 +561,15 @@ function Habits() {
   const habits = useHabits();
   const [initialLoad, setInitialLoad] = useState(true);
   const [sorting, setSorting] = useState(false);
+  const [days, setDays] = React__default.useState({
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false
+  });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -502,7 +586,7 @@ function Habits() {
   async function createDailyHabit(e) {
     e.preventDefault();
     const name = e.target.name.value;
-    await habits.create(name);
+    await habits.create(name, days);
     await habits.load();
     e.target.reset();
   }
@@ -519,10 +603,20 @@ function Habits() {
       }
     }
     if (oldIndex !== newIndex) {
-      habits.set(arrayMove(habits.habits, oldIndex, newIndex));
+      habits.set({
+        habits: arrayMove(habits.habits, oldIndex, newIndex),
+        current_dow: habits.currentDayOfWeek
+      });
       await habits.move(oldIndex, newIndex);
       await habits.load();
     }
+  }
+  function toggleDay(e) {
+    const toggledDay = !days[e.target.dataset.day];
+    setDays((prevDays) => {
+      prevDays[e.target.dataset.day] = toggledDay;
+      return { ...prevDays };
+    });
   }
   return /* @__PURE__ */ jsx(Suspense, { children: /* @__PURE__ */ jsxs(Await, { resolve: habits, children: [
     /* @__PURE__ */ jsx(HabitEdit, {}),
@@ -545,14 +639,17 @@ function Habits() {
           {
             items: habits.habits,
             strategy: verticalListSortingStrategy,
-            children: habits.habits.map((habit) => /* @__PURE__ */ jsx(HabitListItem, { name: habit.name, id: habit.habit_id, status: habit.status, disabled: !sorting }, habit.habit_id))
+            children: habits.habits.map((habit) => /* @__PURE__ */ jsx(HabitListItem, { name: habit.name, id: habit.habit_id, status: habit.status, days: habit.days, disabled: !sorting }, habit.habit_id))
           }
         )
       }
     ),
-    sorting || habits.empty ? /* @__PURE__ */ jsxs("form", { onSubmit: createDailyHabit, className: "flex w-full", children: [
-      /* @__PURE__ */ jsx("div", { className: "w-4/6 mt-1", children: /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }) }),
-      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("input", { type: "submit", value: "Add Habit", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-full" }) })
+    sorting || habits.empty ? /* @__PURE__ */ jsxs("form", { onSubmit: createDailyHabit, children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-4/6 mt-1", children: /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }) }),
+        /* @__PURE__ */ jsx("input", { type: "submit", value: "Add Habit", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-2/6" })
+      ] }),
+      /* @__PURE__ */ jsx("ul", { className: "flex w-full", children: Object.keys(days).map((day, i) => /* @__PURE__ */ jsx("li", { "data-day": day, onClick: toggleDay, className: `p-1 ${i === 0 ? "" : "ml-1"} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? " text-white bg-blue-500" : " bg-white"}`, children: DAY_LOOKUP[day] }, day)) })
     ] }) : "",
     /* @__PURE__ */ jsxs("label", { className: "mt-3 inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsx("input", { type: "checkbox", value: "", className: "sr-only peer", checked: sorting || habits.empty, onChange: handleChange }),
@@ -597,7 +694,7 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-DAAiKP-v.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js", "/assets/index-DwhJx-u2.js", "/assets/components-DQuKrpFD.js", "/assets/performance-BGbpXndS.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-DCxOpV3y.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js", "/assets/index-DwhJx-u2.js", "/assets/components-DQuKrpFD.js", "/assets/performance-BGbpXndS.js", "/assets/iconBase-BhZA9I4k.js", "/assets/habits-BCmBKXzM.js", "/assets/metrics-D5KdxJmS.js", "/assets/index-7KBbZAs2.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-D-I4AE8y.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js", "/assets/index-DwhJx-u2.js", "/assets/metrics-D5KdxJmS.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-BfQCUt9z.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-CDmqbvOb.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js", "/assets/components-DQuKrpFD.js", "/assets/iconBase-BhZA9I4k.js", "/assets/habits-BCmBKXzM.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-DY_jT-Ew.js", "imports": ["/assets/jsx-runtime-Rlbb8XBc.js", "/assets/iconBase-BhZA9I4k.js", "/assets/index-7KBbZAs2.js", "/assets/components-DQuKrpFD.js"], "css": [] } }, "url": "/assets/manifest-2a55ded7.js", "version": "2a55ded7" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-uxpZuTOf.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/components-DDPKHQ_A.js", "/assets/performance-DacJMSDL.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-uOQi5rGs.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/components-DDPKHQ_A.js", "/assets/performance-DacJMSDL.js", "/assets/iconBase-DDyCUnIA.js", "/assets/habits-DiQg7JNc.js", "/assets/metrics-277Q0p9v.js", "/assets/index-BZhA_frr.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-Bc28cimg.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/metrics-277Q0p9v.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-C3o-MzpV.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-CIwyfOI9.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/components-DDPKHQ_A.js", "/assets/iconBase-DDyCUnIA.js", "/assets/habits-DiQg7JNc.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-BFzOVXX-.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/iconBase-DDyCUnIA.js", "/assets/index-BZhA_frr.js", "/assets/components-DDPKHQ_A.js"], "css": [] } }, "url": "/assets/manifest-5002f625.js", "version": "5002f625" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
