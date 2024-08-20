@@ -22,35 +22,38 @@ export function HabitListItem(props) {
   }
 
   async function handleEdit() {
-    console.info(props.id);
-    habits.setEditing(true);
+    habits.setEditing(true, props.id);
   }
-  
+
+  function hideRow() {
+    const habitAppliesToDay = !props.days || props.days[habits.currentDayOfWeek];
+    return props.disabled === true && habitAppliesToDay === false;
+  }
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
-        <div {...listeners} className="w-8 mr-2">
-          {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
-        </div>
-        <div className='w-5/6 mt-0.5'>
-          {props.name}
-        </div>
-        <div className='w-1/6 text-right'>
-          <div className="flex w-full">
-            <div className='w-2/4' />
-            <div className='w-1/4'>
-              {props.disabled ? '' : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
-            </div>
-            <div className='w-1/4'>
-              <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} />
+    hideRow() ? '' : (
+      <div ref={setNodeRef} style={style} {...attributes}>
+        <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
+          <div {...listeners} className="w-8 mr-2">
+            {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
+          </div>
+          <div className='w-5/6 mt-0.5'>
+            {props.name}
+          </div>
+          <div className='w-1/6 text-right'>
+            <div className="flex w-full">
+              <div className='w-2/4' />
+              <div className='w-2/4'>
+                {props.disabled ? <input type="checkbox" checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} /> : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    )
   );
 }

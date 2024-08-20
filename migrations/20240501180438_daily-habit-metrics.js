@@ -14,11 +14,10 @@ export const up = function (knex) {
       });
   };
   
-  /**
-   * @param { import("knex").Knex } knex
-   * @returns { Promise<void> }
-   */
-  export const down = function (knex) {
-    return knex.schema.dropTable('daily_habit_metrics');
-  };
-  
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+export const down = function (knex) {
+  return knex.schema.dropTable('daily_habit_metrics');
+};

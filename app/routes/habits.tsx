@@ -18,7 +18,17 @@ import {
 } from '@dnd-kit/sortable';
 import { HabitListItem } from '../components/habit-list-item';
 import { HabitEdit } from '../components/habit-edit';
-import { useHabits } from '../providers/habits';
+import { useHabits, DayToggles } from '../providers/habits';
+
+const DAY_LOOKUP = {
+  Mon: 'Mon',
+  Tue: 'Tue',
+  Wed: 'Wed',
+  Thu: 'Thu',
+  Fri: 'Fri',
+  Sat: 'Sat',
+  Sun: 'Sun'
+};
 
 export async function loader({request}) {
   await requireUserId(request);
@@ -29,6 +39,15 @@ export default function Habits() {
   const habits = useHabits();
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [sorting, setSorting] = useState<boolean>(false);
+  const [days, setDays] = React.useState<DayToggles>({
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false
+  });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -45,7 +64,7 @@ export default function Habits() {
   async function createDailyHabit(e) {
     e.preventDefault();
     const name = e.target.name.value;
-    await habits.create(name);
+    await habits.create(name, days);
     await habits.load();
     e.target.reset();
   }
@@ -67,10 +86,21 @@ export default function Habits() {
       }
     }
     if (oldIndex !== newIndex) {
-      habits.set(arrayMove(habits.habits, oldIndex, newIndex));
+      habits.set({
+        habits: arrayMove(habits.habits, oldIndex, newIndex),
+        current_dow: habits.currentDayOfWeek
+      });
       await habits.move(oldIndex, newIndex);
       await habits.load();
     }
+  }
+  
+  function toggleDay(e) {
+    const toggledDay = !days[e.target.dataset.day];
+    setDays(prevDays => {
+      prevDays[e.target.dataset.day] = toggledDay;
+      return {...prevDays}
+    });
   }
 
   return (
@@ -99,17 +129,24 @@ export default function Habits() {
               items={habits.habits}
               strategy={verticalListSortingStrategy}
             >
-              {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} disabled={!sorting} />)}
+              {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} days={habit.days} disabled={!sorting} />)}
             </SortableContext>
           </DndContext>
           {(sorting || habits.empty) ? (
-            <form onSubmit={createDailyHabit} className='flex w-full'>
-              <div className='w-4/6 mt-1'>
-                <input autoComplete={'off'} name="name" type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
+            <form onSubmit={createDailyHabit}>
+              <div className='flex w-full'>
+                <div className='w-4/6 mt-1'>
+                  <input autoComplete={'off'} name="name" type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
+                </div>
+                <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-2/6' />
               </div>
-              <div>
-                <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-full' />
-              </div>
+              <ul className='flex w-full'>
+                {Object.keys(days).map((day, i) => (
+                  <li data-day={day} key={day} onClick={toggleDay} className={`p-1 ${i === 0 ? '' : 'ml-1'} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
+                    {DAY_LOOKUP[day]}
+                  </li>
+                ))}
+              </ul>
             </form>
           ) : ''}
           <label className="mt-3 inline-flex items-center cursor-pointer">
