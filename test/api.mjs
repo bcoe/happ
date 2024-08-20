@@ -17,6 +17,7 @@ process.env.DATABASE_URL = process.env.DATABASE_URL ?? 'postgresql://127.0.0.1:5
 // This is a fake session secret.
 process.env.SESSION_SECRET = process.env.SESSION_SECRET ?? '31ba3298-5b08-4ef6-8c25-a536b7b46c64';
 process.env.REDIS_URL = process.env.REDIS_URL ?? 'redis://127.0.0.1:6379';
+process.env.MONGO_URL = 'mongodb://127.0.0.1:27017';
 
 const UUID_REGEX = /[0-9a-f]{8}-.*/;
 
