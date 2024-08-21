@@ -44,6 +44,12 @@ export interface HabitResponse {
   habits: Array<HabitType>;
 }
 
+interface NoteResponse {
+  note?: {
+    note: string
+  };
+}
+
 interface HabitsType {
   habits: Array<HabitType>; 
   empty: boolean;
@@ -59,7 +65,9 @@ interface HabitsType {
   toggle: (id: string) => Promise<void>;
   move: (oldIndex: number, newIndex: number) => Promise<void>;
   // Notes CRUD:
+  note: string;
   createNote: (note: string) => Promise<void>;
+  loadNote: () => Promise<void>;
 }
 
 const HabitsContext = React.createContext<HabitsType>(null!);
@@ -70,6 +78,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [currentDayOfWeek, setCurrentDayOfWeek] = React.useState<string>('');
   const [editing, _setEditing] = React.useState<boolean>(false);
   const [currentlyEditing, setCurrentlyEditing] = React.useState<HabitType | undefined>(undefined);
+  const [note, setNote] = React.useState<string>('');
 
   const set = (habits: HabitResponse) => {
     setHabits([...habits.habits]);
@@ -153,6 +162,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
       h.id = h.habit_id;
     });
     set(habits);
+    await loadNote();
   }
 
   const setEditing = async (editing: boolean, id: string | undefined) => {
@@ -178,7 +188,22 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move, createNote };
+  const loadNote = async () => {
+    const note: string = await fetch('/v1/notes', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(resp => resp.json())
+    .then((resp: NoteResponse) => {
+      return resp.note ? resp.note.note : '';
+    });
+    console.info('setting note', note);
+    setNote(note);
+  };
+
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move, note, createNote, loadNote };
 
   return <HabitsContext.Provider value={value}>{children}</HabitsContext.Provider>;
 }

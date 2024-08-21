@@ -1,5 +1,5 @@
 import React from 'react';
-// import { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useHabits } from '../providers/habits';
 
 export function CommentBox() {
@@ -11,6 +11,7 @@ export function CommentBox() {
     e.preventDefault();
     setSaving(true);
     await habits.createNote(note);
+    await habits.loadNote();
     // Delay for a moment so that there's time to
     // actually see the spinner:
     await new Promise((resolve) => {
@@ -19,17 +20,21 @@ export function CommentBox() {
     setSaving(false);
   }
 
+  useEffect(() => {
+    setNote(habits.note);
+  },[habits.note]);
+
   return (
     <div>
       <form onSubmit={createNote}>
         <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 mt-3">
             <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
                 <label htmlFor="note" className="sr-only">Your comment</label>
-                <textarea name="note" rows={4} className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Leave a note related to today's habits, for reflecting back in the future." required onChange={e => setNote(e.target.value)}></textarea>
+                <textarea name="note" rows={4} className="peer h-full min-h-[100px] w-full resize-none border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-md font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50" placeholder="Leave a note related to today's habits, for reflecting back in the future." required value={note} onChange={e => setNote(e.target.value)}></textarea>
             </div>
             <div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
                 {!saving ? (
-                  <button type="submit" className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
+                  <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline">
                       Leave note
                   </button>) : (
                   <button disabled type="button" className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
