@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { json, useLoaderData } from "@remix-run/react";
+// import { json, useLoaderData } from "@remix-run/react";
 
 const toPercent = (decimal) => `${(decimal * 100).toFixed(0)}%`;
 const tooltipFormatter = (value) => toPercent(value);
