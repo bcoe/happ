@@ -30,7 +30,7 @@ export function MetricsProvider({ children }: { children: React.ReactNode }) {
       const date = (new Date(item.date)).toISOString().split('T')[0];
       return {
         name: date,
-        completed: item.habits_completed / item.total_habits_for_day
+        completed: item.total_habits_for_day ? (item.habits_completed / item.total_habits_for_day) : 0
       }
     })});
   }
