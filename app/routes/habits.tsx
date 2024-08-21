@@ -19,7 +19,7 @@ import {
 import { HabitListItem } from '../components/habit-list-item';
 import { HabitEdit } from '../components/habit-edit';
 import { CommentBox } from '../components/comment-box';
-import { useHabits, DayToggles } from '../providers/habits';
+import { useHabits, DayToggles, NO_DAYS_SET } from '../providers/habits';
 
 const DAY_LOOKUP = {
   Mon: 'Mon',
@@ -40,15 +40,12 @@ export default function Habits() {
   const habits = useHabits();
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [sorting, setSorting] = useState<boolean>(false);
-  const [days, setDays] = React.useState<DayToggles>({
-    Mon: false,
-    Tue: false,
-    Wed: false,
-    Thu: false,
-    Fri: false,
-    Sat: false,
-    Sun: false
+  const date = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit'
   });
+  const [days, setDays] = React.useState<DayToggles>({...NO_DAYS_SET});
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -57,21 +54,33 @@ export default function Habits() {
     })
   );
   useEffect(() => {
-    // If habits are empty go into sorting / editing mode:
-    if (habits.empty) {
-      console.info('we got here?', habits.empty)
-      setSorting(true);
-    }
     if (!initialLoad) return;
     habits.load();
     setInitialLoad(false);
-  }, [initialLoad, habits, habits.empty]);
+  });
+
+  // If all habits are deleted, switch to
+  // sort / edit mode:
+  useEffect(() => {
+    if (habits.empty) {
+      setSorting(true);
+    }
+  }, [habits.empty]);
   
+  // When we toggle into sort / edit mode
+  // reset the day selectors.
+  useEffect(() => {
+    if (sorting) {
+      setDays({...NO_DAYS_SET});
+    }
+  }, [sorting]);
+
   async function createDailyHabit(e) {
     e.preventDefault();
     const name = e.target.name.value;
     await habits.create(name, days);
     await habits.load();
+    setDays({...NO_DAYS_SET});
     e.target.reset();
   }
 
@@ -113,17 +122,20 @@ export default function Habits() {
     <Suspense>
         <Await resolve={habits}>
           <HabitEdit />
+          <div className={'p-2'}>
+            <div className={'flex items-center justify-center'}>
+              <h1 className="text-1xl font-extrabold mb-1">{(sorting || habits.empty) ? 'Add / edit habits' : date}</h1>
+            </div>
+          </div>
           {habits.empty ? (
-              <div className={'border-dashed border-2 border-slate-100 grid grid-cols-3 p-10'}>
-                <div></div>
-                <div>
+              <div className={'border-dashed border-2 border-slate-100 grid p-10'}>
+                <div className={'flex items-center justify-center'}>
                   <p>
                     You have not yet created your first daily habit. Enter a daily habit that you would
                     like to start keeping into the text box below and click
                     <span className={'text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap'}>Add Habit</span>
                   </p>
                 </div>
-                <div></div>
               </div>
           ) : ''}
           <DndContext
@@ -156,11 +168,11 @@ export default function Habits() {
             </form>
           ) : ''}
           <label className="mt-3 inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" className="sr-only peer" checked={sorting || habits.empty} onChange={handleChange} />
+            <input type="checkbox" name="toggle-edit" value="" className="sr-only peer" checked={sorting || habits.empty} onChange={handleChange} />
             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className="ms-3 text-base font-medium text-gray-900 dark:text-gray-300">Add / edit habits</span>
           </label>
-          {sorting ? '' : <CommentBox />}
+          {(sorting || habits.empty) ? '' : <CommentBox />}
         </Await>
     </Suspense>
   )
