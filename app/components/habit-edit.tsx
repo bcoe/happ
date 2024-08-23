@@ -16,13 +16,14 @@ export function HabitEdit() {
   const habits = useHabits();
   const [id, setId] = React.useState<string>('');
   const [name, setName] = React.useState<string>('');
-  const [days, setDays] = React.useState<DayToggles>(NO_DAYS_SET);
+  const [days, setDays] = React.useState<DayToggles>({...NO_DAYS_SET});
 
   function cancel() {
     habits.setEditing(false, undefined);
   }
 
-  async function save() { 
+  async function save(e) { 
+    e.preventDefault();
     await habits.update(id, name, days);
     await habits.load();
     habits.setEditing(false, undefined);
@@ -42,7 +43,20 @@ export function HabitEdit() {
     });
   }
 
+  function handleKeyPress(e) {
+    if (e.code === 'Escape') {
+      cancel();
+    }
+  }
+
   useEffect(() => {
+    // 'esc' should close the form, return should save it:
+    if (habits.editing) {
+      document.addEventListener('keydown', handleKeyPress);
+    } else {
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+
     if (habits.editing && habits.currentlyEditing) {
       setId(habits.currentlyEditing.id);
       setName(habits.currentlyEditing.name);
@@ -54,9 +68,9 @@ export function HabitEdit() {
         }
       }
       if (!allDaysSet) {
-        setDays(JSON.parse(JSON.stringify(habits.currentlyEditing.days)));
+        setDays({...habits.currentlyEditing.days});
       } else {
-        setDays(JSON.parse(JSON.stringify(NO_DAYS_SET)));
+        setDays({...NO_DAYS_SET});
       }
     }
   },[habits.editing]);
@@ -64,7 +78,7 @@ export function HabitEdit() {
   return (
     <div className={`relative z-10${habits.editing ? ' visible' : ' invisible'}`} aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <form onSubmit={save} className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0">
           <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -93,7 +107,7 @@ export function HabitEdit() {
             </div>
             <div className="flex bg-gray-50 px-4 py-3 px-6">
               <div className="w-full">
-                <button type="button" onClick={save} className="mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white">Save</button>
+                <button type="submit" className="mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white">Save</button>
                 <button type="button" onClick={cancel} className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
               </div>
               <div className="w-full text-right">
@@ -102,7 +116,7 @@ export function HabitEdit() {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
