@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "290b5287-0c08-4794-8bc3-b08bbccded90", e._sentryDebugIdIdentifier = "sentry-dbid-290b5287-0c08-4794-8bc3-b08bbccded90");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "4bb08268-8420-40f1-99ba-d79e303b8b94", e._sentryDebugIdIdentifier = "sentry-dbid-4bb08268-8420-40f1-99ba-d79e303b8b94");
   } catch (e2) {
   }
 }();
@@ -14,7 +14,7 @@ import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import * as React from "react";
-import React__default, { PureComponent, useState, useEffect, Suspense } from "react";
+import React__default, { useState, useEffect, Suspense } from "react";
 import "dotenv/config";
 import { createClient } from "redis";
 import RedisStore from "connect-redis";
@@ -138,9 +138,9 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-BJD3h5m-.css";
+const styles = "/assets/shared-DutGYwCy.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "4e78c80a62ef592dda924c9c5ff861d62e8fd01c" };
+_global.SENTRY_RELEASE = { id: "f178d90ae8410fe61b97612d60b2e67f9f4d9fb5" };
 const NO_DAYS_SET = {
   Mon: false,
   Tue: false,
@@ -166,6 +166,7 @@ function HabitsProvider({ children }) {
   const [currentDayOfWeek, setCurrentDayOfWeek] = React.useState("");
   const [editing, _setEditing] = React.useState(false);
   const [currentlyEditing, setCurrentlyEditing] = React.useState(void 0);
+  const [note, setNote] = React.useState("");
   const set = (habits2) => {
     setHabits([...habits2.habits]);
     setEmpty(!habits2.habits.length);
@@ -198,6 +199,14 @@ function HabitsProvider({ children }) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ name, days: hasDaysSet ? days : ALL_DAYS_SET })
+    });
+  };
+  const del = async (id) => {
+    await fetch(`/v1/habits/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
   };
   const toggle = async (id) => {
@@ -238,6 +247,7 @@ function HabitsProvider({ children }) {
       h.id = h.habit_id;
     });
     set(habits2);
+    await loadNote();
   };
   const setEditing = async (editing2, id) => {
     if (id) {
@@ -249,7 +259,28 @@ function HabitsProvider({ children }) {
     }
     _setEditing(editing2);
   };
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, toggle, move };
+  const createNote = async (note2) => {
+    await fetch("/v1/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ note: note2 })
+    });
+  };
+  const loadNote = async () => {
+    const note2 = await fetch("/v1/notes/today", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then((resp) => resp.json()).then((resp) => {
+      return resp.note ? resp.note.note : "";
+    });
+    console.info("setting note", note2);
+    setNote(note2);
+  };
+  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move, note, createNote, loadNote };
   return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, children });
 }
 function useHabits() {
@@ -258,9 +289,23 @@ function useHabits() {
 const MetricsContext = React.createContext(null);
 function MetricsProvider({ children }) {
   const [metrics, setMetrics] = React.useState({ daily: [] });
+  const [notes, setNotes] = React.useState([]);
+  const [selectedDate, setSelectedDate] = React.useState("");
+  const [hasFocus, setHasFocus] = React.useState(false);
   const set = (metrics2) => {
     setMetrics(metrics2);
     return {};
+  };
+  const loadNotes = async () => {
+    const resp = await fetch("/v1/notes");
+    const n = await resp.json();
+    setNotes(n.map((n2) => {
+      return {
+        note: n2.note,
+        date: n2.date,
+        highlight: false
+      };
+    }));
   };
   const load = async () => {
     const resp = await fetch("/v1/metrics");
@@ -269,11 +314,46 @@ function MetricsProvider({ children }) {
       const date = new Date(item.date).toISOString().split("T")[0];
       return {
         name: date,
-        completed: item.habits_completed / item.total_habits_for_day
+        completed: item.total_habits_for_day ? item.habits_completed / item.total_habits_for_day : 0
       };
     }) });
+    await loadNotes();
   };
-  const value = { metrics, load, set };
+  const maybeSelectRow = async (date) => {
+    if (date === selectedDate || hasFocus === false)
+      return;
+    else
+      setSelectedDate(date);
+    if (date !== selectedDate) {
+      setNotes(notes.map((n) => {
+        return {
+          note: n.note,
+          date: n.date,
+          highlight: n.date === date
+        };
+      }));
+    }
+  };
+  const gotFocus = async () => {
+    if (hasFocus === true)
+      return;
+    setHasFocus(true);
+  };
+  const lostFocus = async () => {
+    if (hasFocus === false)
+      return;
+    else
+      setHasFocus(false);
+    setSelectedDate("");
+    setNotes(notes.map((n) => {
+      return {
+        note: n.note,
+        date: n.date,
+        highlight: false
+      };
+    }));
+  };
+  const value = { metrics, notes, load, set, maybeSelectRow, gotFocus, lostFocus };
   return /* @__PURE__ */ jsx(MetricsContext.Provider, { value, children });
 }
 function useMetrics() {
@@ -380,34 +460,51 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 }, Symbol.toStringTag, { value: "Module" }));
 const toPercent = (decimal) => `${(decimal * 100).toFixed(0)}%`;
 const tooltipFormatter = (value) => toPercent(value);
-class HabitAreaChart extends PureComponent {
-  render() {
-    return /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(
-      AreaChart,
-      {
-        data: this.props.data,
-        margin: {
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 0
-        },
-        children: [
-          /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3" }),
-          /* @__PURE__ */ jsx(XAxis, { dataKey: "name" }),
-          /* @__PURE__ */ jsx(YAxis, { tickFormatter: toPercent }),
-          /* @__PURE__ */ jsx(Tooltip, { formatter: tooltipFormatter }),
-          /* @__PURE__ */ jsx(Area, { type: "monotone", dataKey: "completed", stroke: "#8884d8", fill: "#8884d8" })
-        ]
-      }
-    ) });
+function HabitAreaChart(props) {
+  const metrics = useMetrics();
+  function formatLabel(label) {
+    requestAnimationFrame(() => {
+      metrics.maybeSelectRow(label);
+    });
+    return label;
   }
+  function gotFocus() {
+    requestAnimationFrame(() => {
+      metrics.gotFocus();
+    });
+  }
+  function lostFocus() {
+    requestAnimationFrame(() => {
+      metrics.lostFocus();
+    });
+  }
+  return /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(
+    AreaChart,
+    {
+      data: props.data,
+      margin: {
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0
+      },
+      onMouseMove: gotFocus,
+      onMouseLeave: lostFocus,
+      children: [
+        /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3" }),
+        /* @__PURE__ */ jsx(XAxis, { dataKey: "name" }),
+        /* @__PURE__ */ jsx(YAxis, { tickFormatter: toPercent }),
+        /* @__PURE__ */ jsx(Tooltip, { formatter: tooltipFormatter, labelFormatter: formatLabel }),
+        /* @__PURE__ */ jsx(Area, { type: "monotone", dataKey: "completed", stroke: "#8884d8", fill: "#8884d8" })
+      ]
+    }
+  ) });
 }
 async function loader$2({ request }) {
   await requireUserId(request);
   return {};
 }
-function Login$1() {
+function Metrics() {
   const metrics = useMetrics();
   const [initialLoad, setInitialLoad] = useState(true);
   useEffect(() => {
@@ -418,12 +515,22 @@ function Login$1() {
   }, [metrics]);
   return /* @__PURE__ */ jsxs("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", children: [
     /* @__PURE__ */ jsx("h2", { className: "text-center", children: "Habit completion by day" }),
-    /* @__PURE__ */ jsx("div", { className: "m-4 h-56", children: /* @__PURE__ */ jsx(HabitAreaChart, { data: metrics.metrics.daily }) })
+    /* @__PURE__ */ jsx("div", { className: "m-4 h-56", children: /* @__PURE__ */ jsx(HabitAreaChart, { data: metrics.metrics.daily }) }),
+    /* @__PURE__ */ jsx("div", { className: "mt-4 relative overflow-x-auto shadow-md sm:rounded-lg mb-5", children: /* @__PURE__ */ jsxs("table", { className: "w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400", children: [
+      /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: /* @__PURE__ */ jsxs("tr", { children: [
+        /* @__PURE__ */ jsx("th", { scope: "col", className: "px-6 py-3", children: "Date" }),
+        /* @__PURE__ */ jsx("th", { scope: "col", className: "px-6 py-3", children: "Note" })
+      ] }) }),
+      /* @__PURE__ */ jsx("tbody", { children: metrics.notes.map((note, i) => /* @__PURE__ */ jsxs("tr", { className: `${note.highlight ? "bg-gray-100" : "bg-white"} border-b`, children: [
+        /* @__PURE__ */ jsx("th", { scope: "row", className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white", children: note.date }),
+        /* @__PURE__ */ jsx("td", { className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white", children: note.note })
+      ] }, i)) })
+    ] }) })
   ] });
 }
 const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Login$1,
+  default: Metrics,
   loader: loader$2
 }, Symbol.toStringTag, { value: "Module" }));
 const screen = "/assets/screen-01-BO3lyBWu.png";
@@ -470,7 +577,7 @@ function HabitListItem(props) {
     /* @__PURE__ */ jsx("div", { className: "w-5/6 mt-0.5", children: props.name }),
     /* @__PURE__ */ jsx("div", { className: "w-1/6 text-right", children: /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
       /* @__PURE__ */ jsx("div", { className: "w-2/4" }),
-      /* @__PURE__ */ jsx("div", { className: "w-2/4", children: props.disabled ? /* @__PURE__ */ jsx("input", { type: "checkbox", checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) : /* @__PURE__ */ jsx(FiEdit, { className: "mt-1 size-6", onClick: handleEdit }) })
+      /* @__PURE__ */ jsx("div", { className: "w-2/4", children: props.disabled ? /* @__PURE__ */ jsx("input", { type: "checkbox", name: `habit-${props.id}`, checked: props.status, onChange: handleChange, className: "w-4 h-4 mt-2" }) : /* @__PURE__ */ jsx(FiEdit, { className: "mt-1 size-6", onClick: handleEdit }) })
     ] }) })
   ] }) });
 }
@@ -487,12 +594,18 @@ function HabitEdit() {
   const habits = useHabits();
   const [id, setId] = React__default.useState("");
   const [name, setName] = React__default.useState("");
-  const [days, setDays] = React__default.useState(NO_DAYS_SET);
+  const [days, setDays] = React__default.useState({ ...NO_DAYS_SET });
   function cancel() {
     habits.setEditing(false, void 0);
   }
-  async function save() {
+  async function save(e) {
+    e.preventDefault();
     await habits.update(id, name, days);
+    await habits.load();
+    habits.setEditing(false, void 0);
+  }
+  async function del() {
+    await habits.del(id);
     await habits.load();
     habits.setEditing(false, void 0);
   }
@@ -503,7 +616,17 @@ function HabitEdit() {
       return { ...prevDays };
     });
   }
+  function handleKeyPress(e) {
+    if (e.code === "Escape") {
+      cancel();
+    }
+  }
   useEffect(() => {
+    if (habits.editing) {
+      document.addEventListener("keydown", handleKeyPress);
+    } else {
+      document.removeEventListener("keydown", handleKeyPress);
+    }
     if (habits.editing && habits.currentlyEditing) {
       setId(habits.currentlyEditing.id);
       setName(habits.currentlyEditing.name);
@@ -515,15 +638,15 @@ function HabitEdit() {
         }
       }
       if (!allDaysSet) {
-        setDays(JSON.parse(JSON.stringify(habits.currentlyEditing.days)));
+        setDays({ ...habits.currentlyEditing.days });
       } else {
-        setDays(JSON.parse(JSON.stringify(NO_DAYS_SET)));
+        setDays({ ...NO_DAYS_SET });
       }
     }
   }, [habits.editing]);
   return /* @__PURE__ */ jsxs("div", { className: `relative z-10${habits.editing ? " visible" : " invisible"}`, "aria-labelledby": "modal-title", role: "dialog", "aria-modal": "true", children: [
     /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" }),
-    /* @__PURE__ */ jsx("div", { className: "fixed inset-0 z-10 w-screen overflow-y-auto", children: /* @__PURE__ */ jsx("div", { className: "flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0", children: /* @__PURE__ */ jsxs("div", { className: "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", children: [
+    /* @__PURE__ */ jsx("form", { onSubmit: save, className: "fixed inset-0 z-10 w-screen overflow-y-auto", children: /* @__PURE__ */ jsx("div", { className: "flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0", children: /* @__PURE__ */ jsxs("div", { className: "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", children: [
       /* @__PURE__ */ jsx("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4", children: /* @__PURE__ */ jsxs("div", { className: "sm:flex sm:items-start", children: [
         /* @__PURE__ */ jsx("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6 text-gray-800 dark:text-white", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", fill: "none", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" }) }) }),
         /* @__PURE__ */ jsxs("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left", children: [
@@ -536,12 +659,43 @@ function HabitEdit() {
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "flex bg-gray-50 px-4 py-3 px-6", children: [
         /* @__PURE__ */ jsxs("div", { className: "w-full", children: [
-          /* @__PURE__ */ jsx("button", { type: "button", onClick: save, className: "mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white", children: "Save" }),
+          /* @__PURE__ */ jsx("button", { type: "submit", className: "mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white", children: "Save" }),
           /* @__PURE__ */ jsx("button", { type: "button", onClick: cancel, className: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto", children: "Cancel" })
         ] }),
-        /* @__PURE__ */ jsx("div", { className: "w-full text-right", children: /* @__PURE__ */ jsx("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto sm:mt-0 sm-ml-0 ml-2 mt-3", children: "Delete" }) })
+        /* @__PURE__ */ jsx("div", { className: "w-full text-right", children: /* @__PURE__ */ jsx("button", { type: "button", onClick: del, className: "inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto sm:mt-0 sm-ml-0 ml-2 mt-3", children: "Delete" }) })
       ] })
     ] }) }) })
+  ] });
+}
+function CommentBox() {
+  const habits = useHabits();
+  const [note, setNote] = React__default.useState("");
+  const [saving, setSaving] = React__default.useState(false);
+  async function createNote(e) {
+    e.preventDefault();
+    setSaving(true);
+    await habits.createNote(note);
+    await habits.loadNote();
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+    setSaving(false);
+  }
+  useEffect(() => {
+    setNote(habits.note);
+  }, [habits.note]);
+  return /* @__PURE__ */ jsxs("div", { className: "mt-8", children: [
+    /* @__PURE__ */ jsx("hr", {}),
+    /* @__PURE__ */ jsx("form", { onSubmit: createNote, children: /* @__PURE__ */ jsxs("div", { className: "w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 mt-8", children: [
+      /* @__PURE__ */ jsx("div", { className: "px-4 py-2 bg-white rounded-t-lg", children: /* @__PURE__ */ jsx("textarea", { name: "note", rows: 4, className: "peer h-full min-h-[100px] w-full resize-none border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-md font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50", placeholder: "Leave a note about today's progress for future reflection.", required: true, value: note, onChange: (e) => setNote(e.target.value) }) }),
+      /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between px-3 py-2 border-t", children: !saving ? /* @__PURE__ */ jsx("button", { type: "submit", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline", children: "Leave note" }) : /* @__PURE__ */ jsxs("button", { disabled: true, type: "button", className: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline", children: [
+        /* @__PURE__ */ jsxs("svg", { "aria-hidden": "true", role: "status", className: "inline w-4 h-4 me-3 text-white animate-spin", viewBox: "0 0 100 101", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
+          /* @__PURE__ */ jsx("path", { d: "M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z", fill: "#E5E7EB" }),
+          /* @__PURE__ */ jsx("path", { d: "M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z", fill: "currentColor" })
+        ] }),
+        "Saving..."
+      ] }) })
+    ] }) })
   ] });
 }
 const DAY_LOOKUP = {
@@ -561,15 +715,12 @@ function Habits() {
   const habits = useHabits();
   const [initialLoad, setInitialLoad] = useState(true);
   const [sorting, setSorting] = useState(false);
-  const [days, setDays] = React__default.useState({
-    Mon: false,
-    Tue: false,
-    Wed: false,
-    Thu: false,
-    Fri: false,
-    Sat: false,
-    Sun: false
+  const date = (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit"
   });
+  const [days, setDays] = React__default.useState({ ...NO_DAYS_SET });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -582,12 +733,23 @@ function Habits() {
       return;
     habits.load();
     setInitialLoad(false);
-  }, [initialLoad, habits]);
+  });
+  useEffect(() => {
+    if (habits.empty) {
+      setSorting(true);
+    }
+  }, [habits.empty]);
+  useEffect(() => {
+    if (sorting) {
+      setDays({ ...NO_DAYS_SET });
+    }
+  }, [sorting]);
   async function createDailyHabit(e) {
     e.preventDefault();
     const name = e.target.name.value;
     await habits.create(name, days);
     await habits.load();
+    setDays({ ...NO_DAYS_SET });
     e.target.reset();
   }
   function handleChange(event) {
@@ -620,14 +782,11 @@ function Habits() {
   }
   return /* @__PURE__ */ jsx(Suspense, { children: /* @__PURE__ */ jsxs(Await, { resolve: habits, children: [
     /* @__PURE__ */ jsx(HabitEdit, {}),
-    habits.empty ? /* @__PURE__ */ jsxs("div", { className: "border-dashed border-2 border-slate-100 grid grid-cols-3 p-10", children: [
-      /* @__PURE__ */ jsx("div", {}),
-      /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("p", { children: [
-        "You have not yet created your first daily habit. Enter a daily habit that you would like to start keeping into the text box below and click",
-        /* @__PURE__ */ jsx("span", { className: "text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap", children: "Add Habit" })
-      ] }) }),
-      /* @__PURE__ */ jsx("div", {})
-    ] }) : "",
+    /* @__PURE__ */ jsx("div", { className: "p-2", children: /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx("h1", { className: "text-1xl font-extrabold mb-1", children: sorting || habits.empty ? "Add / edit habits" : date }) }) }),
+    habits.empty ? /* @__PURE__ */ jsx("div", { className: "border-dashed border-2 border-slate-100 grid p-10", children: /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsxs("p", { children: [
+      "You have not yet created your first daily habit. Enter a daily habit that you would like to start keeping into the text box below and click",
+      /* @__PURE__ */ jsx("span", { className: "text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap", children: "Add Habit" })
+    ] }) }) }) : "",
     /* @__PURE__ */ jsx(
       DndContext,
       {
@@ -652,10 +811,11 @@ function Habits() {
       /* @__PURE__ */ jsx("ul", { className: "flex w-full", children: Object.keys(days).map((day, i) => /* @__PURE__ */ jsx("li", { "data-day": day, onClick: toggleDay, className: `p-1 ${i === 0 ? "" : "ml-1"} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? " text-white bg-blue-500" : " bg-white"}`, children: DAY_LOOKUP[day] }, day)) })
     ] }) : "",
     /* @__PURE__ */ jsxs("label", { className: "mt-3 inline-flex items-center cursor-pointer", children: [
-      /* @__PURE__ */ jsx("input", { type: "checkbox", value: "", className: "sr-only peer", checked: sorting || habits.empty, onChange: handleChange }),
+      /* @__PURE__ */ jsx("input", { type: "checkbox", name: "toggle-edit", value: "", className: "sr-only peer", checked: sorting || habits.empty, onChange: handleChange }),
       /* @__PURE__ */ jsx("div", { className: "relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" }),
       /* @__PURE__ */ jsx("span", { className: "ms-3 text-base font-medium text-gray-900 dark:text-gray-300", children: "Add / edit habits" })
-    ] })
+    ] }),
+    sorting || habits.empty ? "" : /* @__PURE__ */ jsx(CommentBox, {})
   ] }) });
 }
 const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -694,7 +854,7 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-uxpZuTOf.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/components-DDPKHQ_A.js", "/assets/performance-DacJMSDL.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-uOQi5rGs.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/components-DDPKHQ_A.js", "/assets/performance-DacJMSDL.js", "/assets/iconBase-DDyCUnIA.js", "/assets/habits-DiQg7JNc.js", "/assets/metrics-277Q0p9v.js", "/assets/index-BZhA_frr.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-Bc28cimg.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/index-D7LI4uqm.js", "/assets/metrics-277Q0p9v.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-C3o-MzpV.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-CIwyfOI9.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/components-DDPKHQ_A.js", "/assets/iconBase-DDyCUnIA.js", "/assets/habits-DiQg7JNc.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-BFzOVXX-.js", "imports": ["/assets/jsx-runtime-BNRZUmo-.js", "/assets/iconBase-DDyCUnIA.js", "/assets/index-BZhA_frr.js", "/assets/components-DDPKHQ_A.js"], "css": [] } }, "url": "/assets/manifest-5002f625.js", "version": "5002f625" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-AP_0Up-C.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/index-B82Z1-WW.js", "/assets/components-C1uzTfJy.js", "/assets/performance-mgN0Jf0H.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BtErLwbF.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/index-B82Z1-WW.js", "/assets/components-C1uzTfJy.js", "/assets/performance-mgN0Jf0H.js", "/assets/iconBase-DRd2S_2U.js", "/assets/habits-CpAXl-tC.js", "/assets/metrics-CZO-FXyB.js", "/assets/index-BztSRQZF.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-D7ogJ1PC.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/metrics-CZO-FXyB.js", "/assets/index-B82Z1-WW.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-AqJ6Zbw0.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-C3zer44L.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/components-C1uzTfJy.js", "/assets/iconBase-DRd2S_2U.js", "/assets/habits-CpAXl-tC.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-Duf5tGaA.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/iconBase-DRd2S_2U.js", "/assets/index-BztSRQZF.js", "/assets/components-C1uzTfJy.js"], "css": [] } }, "url": "/assets/manifest-e4eb1b2c.js", "version": "e4eb1b2c" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
