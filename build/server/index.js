@@ -2,7 +2,7 @@
 !function() {
   try {
     var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "4bb08268-8420-40f1-99ba-d79e303b8b94", e._sentryDebugIdIdentifier = "sentry-dbid-4bb08268-8420-40f1-99ba-d79e303b8b94");
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "43c0cc2d-a2e4-4d39-88df-ef06eec54f4e", e._sentryDebugIdIdentifier = "sentry-dbid-43c0cc2d-a2e4-4d39-88df-ef06eec54f4e");
   } catch (e2) {
   }
 }();
@@ -138,9 +138,9 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-DutGYwCy.css";
+const styles = "/assets/shared-BAucGq0X.css";
 var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "f178d90ae8410fe61b97612d60b2e67f9f4d9fb5" };
+_global.SENTRY_RELEASE = { id: "ce8e1bda682c9d3f5acc6473e9ddded106370097" };
 const NO_DAYS_SET = {
   Mon: false,
   Tue: false,
@@ -160,7 +160,9 @@ const ALL_DAYS_SET = {
   Sun: true
 };
 const HabitsContext = React.createContext(null);
-function HabitsProvider({ children }) {
+function HabitsProvider({
+  children
+}) {
   const [habits, setHabits] = React.useState([]);
   const [empty, setEmpty] = React.useState(false);
   const [currentDayOfWeek, setCurrentDayOfWeek] = React.useState("");
@@ -184,7 +186,10 @@ function HabitsProvider({ children }) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name, days: hasDaysSet ? days : void 0 })
+      body: JSON.stringify({
+        name,
+        days: hasDaysSet ? days : void 0
+      })
     });
   };
   const update = async (id, name, days) => {
@@ -198,7 +203,10 @@ function HabitsProvider({ children }) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name, days: hasDaysSet ? days : ALL_DAYS_SET })
+      body: JSON.stringify({
+        name,
+        days: hasDaysSet ? days : ALL_DAYS_SET
+      })
     });
   };
   const del = async (id) => {
@@ -265,7 +273,9 @@ function HabitsProvider({ children }) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ note: note2 })
+      body: JSON.stringify({
+        note: note2
+      })
     });
   };
   const loadNote = async () => {
@@ -280,15 +290,36 @@ function HabitsProvider({ children }) {
     console.info("setting note", note2);
     setNote(note2);
   };
-  const value = { habits, empty, currentDayOfWeek, editing, setEditing, currentlyEditing, load, set, create, update, del, toggle, move, note, createNote, loadNote };
-  return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, children });
+  const value = {
+    habits,
+    empty,
+    currentDayOfWeek,
+    editing,
+    setEditing,
+    currentlyEditing,
+    load,
+    set,
+    create,
+    update,
+    del,
+    toggle,
+    move,
+    note,
+    createNote,
+    loadNote
+  };
+  return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, "data-sentry-element": "unknown", "data-sentry-component": "HabitsProvider", "data-sentry-source-file": "habits.tsx", children });
 }
 function useHabits() {
   return React.useContext(HabitsContext);
 }
 const MetricsContext = React.createContext(null);
-function MetricsProvider({ children }) {
-  const [metrics, setMetrics] = React.useState({ daily: [] });
+function MetricsProvider({
+  children
+}) {
+  const [metrics, setMetrics] = React.useState({
+    daily: []
+  });
   const [notes, setNotes] = React.useState([]);
   const [selectedDate, setSelectedDate] = React.useState("");
   const [hasFocus, setHasFocus] = React.useState(false);
@@ -310,13 +341,15 @@ function MetricsProvider({ children }) {
   const load = async () => {
     const resp = await fetch("/v1/metrics");
     const m = await resp.json();
-    set({ daily: m.map((item) => {
-      const date = new Date(item.date).toISOString().split("T")[0];
-      return {
-        name: date,
-        completed: item.total_habits_for_day ? item.habits_completed / item.total_habits_for_day : 0
-      };
-    }) });
+    set({
+      daily: m.map((item) => {
+        const date = new Date(item.date).toISOString().split("T")[0];
+        return {
+          name: date,
+          completed: item.total_habits_for_day ? item.habits_completed / item.total_habits_for_day : 0
+        };
+      })
+    });
     await loadNotes();
   };
   const maybeSelectRow = async (date) => {
@@ -353,8 +386,16 @@ function MetricsProvider({ children }) {
       };
     }));
   };
-  const value = { metrics, notes, load, set, maybeSelectRow, gotFocus, lostFocus };
-  return /* @__PURE__ */ jsx(MetricsContext.Provider, { value, children });
+  const value = {
+    metrics,
+    notes,
+    load,
+    set,
+    maybeSelectRow,
+    gotFocus,
+    lostFocus
+  };
+  return /* @__PURE__ */ jsx(MetricsContext.Provider, { value, "data-sentry-element": "unknown", "data-sentry-component": "MetricsProvider", "data-sentry-source-file": "metrics.tsx", children });
 }
 function useMetrics() {
   return React.useContext(MetricsContext);
@@ -406,49 +447,50 @@ async function requireUserId(req) {
     throw redirect("/login");
   }
 }
-const links = () => [
-  { rel: "stylesheet", href: styles }
-];
-const loader$3 = async ({ request }) => {
+const links = () => [{
+  rel: "stylesheet",
+  href: styles
+}];
+const loader$3 = async ({
+  request
+}) => {
   const userId = await isLoggedIn(request);
-  return json({ isLoggedIn: !!userId });
+  return json({
+    isLoggedIn: !!userId
+  });
 };
 function App() {
-  const { isLoggedIn: isLoggedIn2 } = useLoaderData();
-  return /* @__PURE__ */ jsxs("html", { children: [
+  const {
+    isLoggedIn: isLoggedIn2
+  } = useLoaderData();
+  return /* @__PURE__ */ jsxs("html", { "data-sentry-component": "App", "data-sentry-source-file": "root.tsx", children: [
     /* @__PURE__ */ jsxs("head", { children: [
-      /* @__PURE__ */ jsx(
-        "link",
-        {
-          rel: "icon",
-          href: "data:image/x-icon;base64,AA"
-        }
-      ),
-      /* @__PURE__ */ jsx(Links, {}),
-      /* @__PURE__ */ jsx(Meta, {}),
-      /* @__PURE__ */ jsx("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" })
+      /* @__PURE__ */ jsx("link", { rel: "icon", href: "data:image/x-icon;base64,AA" }),
+      /* @__PURE__ */ jsx(Links, { "data-sentry-element": "Links", "data-sentry-source-file": "root.tsx" }),
+      /* @__PURE__ */ jsx(Meta, { "data-sentry-element": "Meta", "data-sentry-source-file": "root.tsx" }),
+      /* @__PURE__ */ jsx("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0", "data-sentry-element": "meta", "data-sentry-source-file": "root.tsx" })
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
       /* @__PURE__ */ jsx("div", { className: "header", children: /* @__PURE__ */ jsxs("div", { className: "flex", children: [
-        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { to: "/", children: /* @__PURE__ */ jsx(FaThList, { className: "ml-8 mt-1 size-5" }) }) }),
-        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", children: "Habits" }) }),
-        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/metrics", children: "Metrics" }) }),
+        /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { to: "/", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: /* @__PURE__ */ jsx(FaThList, { className: "ml-8 mt-1 size-5", "data-sentry-element": "FaThList", "data-sentry-source-file": "root.tsx" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: "Habits" }) }),
+        /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/metrics", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: "Metrics" }) }),
         isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
         !isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
         /* @__PURE__ */ jsx("div", { className: "lg:w-1/6" }),
-        /* @__PURE__ */ jsx("div", { className: "w-full lg:w-4/6", children: /* @__PURE__ */ jsx(HabitsProvider, { children: /* @__PURE__ */ jsx(MetricsProvider, { children: /* @__PURE__ */ jsx(Outlet, {}) }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "w-full lg:w-4/6", children: /* @__PURE__ */ jsx(HabitsProvider, { "data-sentry-element": "HabitsProvider", "data-sentry-source-file": "root.tsx", children: /* @__PURE__ */ jsx(MetricsProvider, { "data-sentry-element": "MetricsProvider", "data-sentry-source-file": "root.tsx", children: /* @__PURE__ */ jsx(Outlet, {}) }) }) }),
         /* @__PURE__ */ jsx("div", { className: "lg:w-1/6" })
       ] }),
-      /* @__PURE__ */ jsx(Scripts, {})
+      /* @__PURE__ */ jsx(Scripts, { "data-sentry-element": "Scripts", "data-sentry-source-file": "root.tsx" })
     ] })
   ] });
 }
 const ErrorBoundary = () => {
   const error = useRouteError();
   captureRemixErrorBoundaryError(error);
-  return /* @__PURE__ */ jsx("div", { children: "Something went wrong" });
+  return /* @__PURE__ */ jsx("div", { "data-sentry-component": "ErrorBoundary", "data-sentry-source-file": "root.tsx", children: "Something went wrong" });
 };
 const root = withSentry(App);
 const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -478,29 +520,22 @@ function HabitAreaChart(props) {
       metrics.lostFocus();
     });
   }
-  return /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", children: /* @__PURE__ */ jsxs(
-    AreaChart,
-    {
-      data: props.data,
-      margin: {
-        top: 10,
-        right: 30,
-        left: 0,
-        bottom: 0
-      },
-      onMouseMove: gotFocus,
-      onMouseLeave: lostFocus,
-      children: [
-        /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3" }),
-        /* @__PURE__ */ jsx(XAxis, { dataKey: "name" }),
-        /* @__PURE__ */ jsx(YAxis, { tickFormatter: toPercent }),
-        /* @__PURE__ */ jsx(Tooltip, { formatter: tooltipFormatter, labelFormatter: formatLabel }),
-        /* @__PURE__ */ jsx(Area, { type: "monotone", dataKey: "completed", stroke: "#8884d8", fill: "#8884d8" })
-      ]
-    }
-  ) });
+  return /* @__PURE__ */ jsx(ResponsiveContainer, { width: "100%", height: "100%", "data-sentry-element": "ResponsiveContainer", "data-sentry-component": "HabitAreaChart", "data-sentry-source-file": "habit-area-chart.tsx", children: /* @__PURE__ */ jsxs(AreaChart, { data: props.data, margin: {
+    top: 10,
+    right: 30,
+    left: 0,
+    bottom: 0
+  }, onMouseMove: gotFocus, onMouseLeave: lostFocus, "data-sentry-element": "AreaChart", "data-sentry-source-file": "habit-area-chart.tsx", children: [
+    /* @__PURE__ */ jsx(CartesianGrid, { strokeDasharray: "3 3", "data-sentry-element": "CartesianGrid", "data-sentry-source-file": "habit-area-chart.tsx" }),
+    /* @__PURE__ */ jsx(XAxis, { dataKey: "name", "data-sentry-element": "XAxis", "data-sentry-source-file": "habit-area-chart.tsx" }),
+    /* @__PURE__ */ jsx(YAxis, { tickFormatter: toPercent, "data-sentry-element": "YAxis", "data-sentry-source-file": "habit-area-chart.tsx" }),
+    /* @__PURE__ */ jsx(Tooltip, { formatter: tooltipFormatter, labelFormatter: formatLabel, "data-sentry-element": "Tooltip", "data-sentry-source-file": "habit-area-chart.tsx" }),
+    /* @__PURE__ */ jsx(Area, { type: "monotone", dataKey: "completed", stroke: "#8884d8", fill: "#8884d8", "data-sentry-element": "Area", "data-sentry-source-file": "habit-area-chart.tsx" })
+  ] }) });
 }
-async function loader$2({ request }) {
+async function loader$2({
+  request
+}) {
   await requireUserId(request);
   return {};
 }
@@ -513,17 +548,17 @@ function Metrics() {
     setInitialLoad(false);
     metrics.load();
   }, [metrics]);
-  return /* @__PURE__ */ jsxs("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", "data-sentry-component": "Metrics", "data-sentry-source-file": "metrics.tsx", children: [
     /* @__PURE__ */ jsx("h2", { className: "text-center", children: "Habit completion by day" }),
-    /* @__PURE__ */ jsx("div", { className: "m-4 h-56", children: /* @__PURE__ */ jsx(HabitAreaChart, { data: metrics.metrics.daily }) }),
-    /* @__PURE__ */ jsx("div", { className: "mt-4 relative overflow-x-auto shadow-md sm:rounded-lg mb-5", children: /* @__PURE__ */ jsxs("table", { className: "w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400", children: [
-      /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: /* @__PURE__ */ jsxs("tr", { children: [
+    /* @__PURE__ */ jsx("div", { className: "m-4 h-56", children: /* @__PURE__ */ jsx(HabitAreaChart, { data: metrics.metrics.daily, "data-sentry-element": "HabitAreaChart", "data-sentry-source-file": "metrics.tsx" }) }),
+    /* @__PURE__ */ jsx("div", { className: "mt-4 relative overflow-x-auto shadow-md sm:rounded-lg mb-5", children: /* @__PURE__ */ jsxs("table", { className: "w-full text-sm text-left rtl:text-right text-gray-500", children: [
+      /* @__PURE__ */ jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50", children: /* @__PURE__ */ jsxs("tr", { children: [
         /* @__PURE__ */ jsx("th", { scope: "col", className: "px-6 py-3", children: "Date" }),
         /* @__PURE__ */ jsx("th", { scope: "col", className: "px-6 py-3", children: "Note" })
       ] }) }),
       /* @__PURE__ */ jsx("tbody", { children: metrics.notes.map((note, i) => /* @__PURE__ */ jsxs("tr", { className: `${note.highlight ? "bg-gray-100" : "bg-white"} border-b`, children: [
-        /* @__PURE__ */ jsx("th", { scope: "row", className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white", children: note.date }),
-        /* @__PURE__ */ jsx("td", { className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white", children: note.note })
+        /* @__PURE__ */ jsx("th", { scope: "row", className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap", children: note.date }),
+        /* @__PURE__ */ jsx("td", { className: "px-6 py-4 font-medium text-gray-900 whitespace-nowrap", children: note.note })
       ] }, i)) })
     ] }) })
   ] });
@@ -535,10 +570,10 @@ const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 }, Symbol.toStringTag, { value: "Module" }));
 const screen = "/assets/screen-01-BO3lyBWu.png";
 function Index() {
-  return /* @__PURE__ */ jsxs("div", { className: "lg:flex", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "lg:flex", "data-sentry-component": "Index", "data-sentry-source-file": "_index.tsx", children: [
     /* @__PURE__ */ jsx("div", { className: "lg:w-2/3 sm:full-width", children: /* @__PURE__ */ jsx("img", { src: screen }) }),
     /* @__PURE__ */ jsx("div", { className: "mt-10 lg:w-1/3 sm:full-width m-8 lg:m-1", children: /* @__PURE__ */ jsxs("blockquote", { className: "text-xl italic font-semibold text-gray-900 dark:text-white", children: [
-      /* @__PURE__ */ jsx("svg", { className: "w-8 h-8 text-gray-400 dark:text-gray-600 mb-4", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "currentColor", viewBox: "0 0 18 14", children: /* @__PURE__ */ jsx("path", { d: "M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" }) }),
+      /* @__PURE__ */ jsx("svg", { className: "w-8 h-8 text-gray-400 dark:text-gray-600 mb-4", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "currentColor", viewBox: "0 0 18 14", "data-sentry-element": "svg", "data-sentry-source-file": "_index.tsx", children: /* @__PURE__ */ jsx("path", { d: "M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z", "data-sentry-element": "path", "data-sentry-source-file": "_index.tsx" }) }),
       /* @__PURE__ */ jsx("p", { className: "text-gray-400", children: "HabitTrack.me lets you track daily habits that you'd like to make a part of your routine. Its metrics allow you to see if you're meeting your goals week over week." })
     ] }) })
   ] });
@@ -555,7 +590,10 @@ function HabitListItem(props) {
     setNodeRef,
     transform,
     transition
-  } = useSortable({ id: props.id, disabled: props.disabled });
+  } = useSortable({
+    id: props.id,
+    disabled: props.disabled
+  });
   async function handleChange(event) {
     event.preventDefault();
     await habits.toggle(props.id);
@@ -594,7 +632,9 @@ function HabitEdit() {
   const habits = useHabits();
   const [id, setId] = React__default.useState("");
   const [name, setName] = React__default.useState("");
-  const [days, setDays] = React__default.useState({ ...NO_DAYS_SET });
+  const [days, setDays] = React__default.useState({
+    ...NO_DAYS_SET
+  });
   function cancel() {
     habits.setEditing(false, void 0);
   }
@@ -613,7 +653,9 @@ function HabitEdit() {
     const toggledDay = !days[e.target.dataset.day];
     setDays((prevDays) => {
       prevDays[e.target.dataset.day] = toggledDay;
-      return { ...prevDays };
+      return {
+        ...prevDays
+      };
     });
   }
   function handleKeyPress(e) {
@@ -638,17 +680,21 @@ function HabitEdit() {
         }
       }
       if (!allDaysSet) {
-        setDays({ ...habits.currentlyEditing.days });
+        setDays({
+          ...habits.currentlyEditing.days
+        });
       } else {
-        setDays({ ...NO_DAYS_SET });
+        setDays({
+          ...NO_DAYS_SET
+        });
       }
     }
   }, [habits.editing]);
-  return /* @__PURE__ */ jsxs("div", { className: `relative z-10${habits.editing ? " visible" : " invisible"}`, "aria-labelledby": "modal-title", role: "dialog", "aria-modal": "true", children: [
+  return /* @__PURE__ */ jsxs("div", { className: `relative z-10${habits.editing ? " visible" : " invisible"}`, "aria-labelledby": "modal-title", role: "dialog", "aria-modal": "true", "data-sentry-component": "HabitEdit", "data-sentry-source-file": "habit-edit.tsx", children: [
     /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" }),
     /* @__PURE__ */ jsx("form", { onSubmit: save, className: "fixed inset-0 z-10 w-screen overflow-y-auto", children: /* @__PURE__ */ jsx("div", { className: "flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0", children: /* @__PURE__ */ jsxs("div", { className: "relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", children: [
       /* @__PURE__ */ jsx("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4", children: /* @__PURE__ */ jsxs("div", { className: "sm:flex sm:items-start", children: [
-        /* @__PURE__ */ jsx("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6 text-gray-800 dark:text-white", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", fill: "none", viewBox: "0 0 24 24", children: /* @__PURE__ */ jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" }) }) }),
+        /* @__PURE__ */ jsx("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10", children: /* @__PURE__ */ jsx("svg", { className: "w-6 h-6 text-gray-800 dark:text-white", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", fill: "none", viewBox: "0 0 24 24", "data-sentry-element": "svg", "data-sentry-source-file": "habit-edit.tsx", children: /* @__PURE__ */ jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z", "data-sentry-element": "path", "data-sentry-source-file": "habit-edit.tsx" }) }) }),
         /* @__PURE__ */ jsxs("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left", children: [
           /* @__PURE__ */ jsx("h3", { className: "text-base font-semibold leading-6 text-gray-900", id: "modal-title", children: "Edit habit" }),
           /* @__PURE__ */ jsxs("div", { className: "mt-2", children: [
@@ -684,7 +730,7 @@ function CommentBox() {
   useEffect(() => {
     setNote(habits.note);
   }, [habits.note]);
-  return /* @__PURE__ */ jsxs("div", { className: "mt-8", children: [
+  return /* @__PURE__ */ jsxs("div", { className: "mt-8", "data-sentry-component": "CommentBox", "data-sentry-source-file": "comment-box.tsx", children: [
     /* @__PURE__ */ jsx("hr", {}),
     /* @__PURE__ */ jsx("form", { onSubmit: createNote, children: /* @__PURE__ */ jsxs("div", { className: "w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 mt-8", children: [
       /* @__PURE__ */ jsx("div", { className: "px-4 py-2 bg-white rounded-t-lg", children: /* @__PURE__ */ jsx("textarea", { name: "note", rows: 4, className: "peer h-full min-h-[100px] w-full resize-none border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-md font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50", placeholder: "Leave a note about today's progress for future reflection.", required: true, value: note, onChange: (e) => setNote(e.target.value) }) }),
@@ -707,7 +753,9 @@ const DAY_LOOKUP = {
   Sat: "Sat",
   Sun: "Sun"
 };
-async function loader$1({ request }) {
+async function loader$1({
+  request
+}) {
   await requireUserId(request);
   return {};
 }
@@ -720,14 +768,12 @@ function Habits() {
     month: "long",
     day: "2-digit"
   });
-  const [days, setDays] = React__default.useState({ ...NO_DAYS_SET });
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  );
+  const [days, setDays] = React__default.useState({
+    ...NO_DAYS_SET
+  });
+  const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor), useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates
+  }));
   useEffect(() => {
     if (!initialLoad)
       return;
@@ -741,7 +787,9 @@ function Habits() {
   }, [habits.empty]);
   useEffect(() => {
     if (sorting) {
-      setDays({ ...NO_DAYS_SET });
+      setDays({
+        ...NO_DAYS_SET
+      });
     }
   }, [sorting]);
   async function createDailyHabit(e) {
@@ -749,14 +797,19 @@ function Habits() {
     const name = e.target.name.value;
     await habits.create(name, days);
     await habits.load();
-    setDays({ ...NO_DAYS_SET });
+    setDays({
+      ...NO_DAYS_SET
+    });
     e.target.reset();
   }
   function handleChange(event) {
     setSorting(!sorting);
   }
   async function handleDragEnd(event) {
-    const { active, over } = event;
+    const {
+      active,
+      over
+    } = event;
     const oldIndex = habits.habits.findIndex((item) => item.habit_id === active.id);
     const newIndex = habits.habits.findIndex((item) => item.habit_id === over.id);
     if (newIndex > oldIndex) {
@@ -777,32 +830,19 @@ function Habits() {
     const toggledDay = !days[e.target.dataset.day];
     setDays((prevDays) => {
       prevDays[e.target.dataset.day] = toggledDay;
-      return { ...prevDays };
+      return {
+        ...prevDays
+      };
     });
   }
-  return /* @__PURE__ */ jsx(Suspense, { children: /* @__PURE__ */ jsxs(Await, { resolve: habits, children: [
-    /* @__PURE__ */ jsx(HabitEdit, {}),
+  return /* @__PURE__ */ jsx(Suspense, { "data-sentry-element": "Suspense", "data-sentry-component": "Habits", "data-sentry-source-file": "habits.tsx", children: /* @__PURE__ */ jsxs(Await, { resolve: habits, "data-sentry-element": "Await", "data-sentry-source-file": "habits.tsx", children: [
+    /* @__PURE__ */ jsx(HabitEdit, { "data-sentry-element": "HabitEdit", "data-sentry-source-file": "habits.tsx" }),
     /* @__PURE__ */ jsx("div", { className: "p-2", children: /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsx("h1", { className: "text-1xl font-extrabold mb-1", children: sorting || habits.empty ? "Add / edit habits" : date }) }) }),
     habits.empty ? /* @__PURE__ */ jsx("div", { className: "border-dashed border-2 border-slate-100 grid p-10", children: /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center", children: /* @__PURE__ */ jsxs("p", { children: [
       "You have not yet created your first daily habit. Enter a daily habit that you would like to start keeping into the text box below and click",
       /* @__PURE__ */ jsx("span", { className: "text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap", children: "Add Habit" })
     ] }) }) }) : "",
-    /* @__PURE__ */ jsx(
-      DndContext,
-      {
-        sensors,
-        collisionDetection: closestCenter,
-        onDragEnd: handleDragEnd,
-        children: /* @__PURE__ */ jsx(
-          SortableContext,
-          {
-            items: habits.habits,
-            strategy: verticalListSortingStrategy,
-            children: habits.habits.map((habit) => /* @__PURE__ */ jsx(HabitListItem, { name: habit.name, id: habit.habit_id, status: habit.status, days: habit.days, disabled: !sorting }, habit.habit_id))
-          }
-        )
-      }
-    ),
+    /* @__PURE__ */ jsx(DndContext, { sensors, collisionDetection: closestCenter, onDragEnd: handleDragEnd, "data-sentry-element": "DndContext", "data-sentry-source-file": "habits.tsx", children: /* @__PURE__ */ jsx(SortableContext, { items: habits.habits, strategy: verticalListSortingStrategy, "data-sentry-element": "SortableContext", "data-sentry-source-file": "habits.tsx", children: habits.habits.map((habit) => /* @__PURE__ */ jsx(HabitListItem, { name: habit.name, id: habit.habit_id, status: habit.status, days: habit.days, disabled: !sorting }, habit.habit_id)) }) }),
     sorting || habits.empty ? /* @__PURE__ */ jsxs("form", { onSubmit: createDailyHabit, children: [
       /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
         /* @__PURE__ */ jsx("div", { className: "w-4/6 mt-1", children: /* @__PURE__ */ jsx("input", { autoComplete: "off", name: "name", type: "text", className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline" }) }),
@@ -812,8 +852,8 @@ function Habits() {
     ] }) : "",
     /* @__PURE__ */ jsxs("label", { className: "mt-3 inline-flex items-center cursor-pointer", children: [
       /* @__PURE__ */ jsx("input", { type: "checkbox", name: "toggle-edit", value: "", className: "sr-only peer", checked: sorting || habits.empty, onChange: handleChange }),
-      /* @__PURE__ */ jsx("div", { className: "relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" }),
-      /* @__PURE__ */ jsx("span", { className: "ms-3 text-base font-medium text-gray-900 dark:text-gray-300", children: "Add / edit habits" })
+      /* @__PURE__ */ jsx("div", { className: "relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" }),
+      /* @__PURE__ */ jsx("span", { className: "ms-3 text-base font-medium text-gray-900", children: "Add / edit habits" })
     ] }),
     sorting || habits.empty ? "" : /* @__PURE__ */ jsx(CommentBox, {})
   ] }) });
@@ -823,18 +863,11 @@ const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Habits,
   loader: loader$1
 }, Symbol.toStringTag, { value: "Module" }));
-const oAuth2Client = new OAuth2Client(
-  process.env.OAUTH_CLIENT_ID,
-  process.env.OAUTH_CLIENT_SECRET,
-  process.env.OAUTH_REDIRECT
-);
+const oAuth2Client = new OAuth2Client(process.env.OAUTH_CLIENT_ID, process.env.OAUTH_CLIENT_SECRET, process.env.OAUTH_REDIRECT);
 const loader = async () => {
   const redirect2 = oAuth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: [
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/userinfo.email"
-    ]
+    scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
   });
   return json({
     data: {
@@ -843,9 +876,11 @@ const loader = async () => {
   });
 };
 function Login() {
-  const { data } = useLoaderData();
-  return /* @__PURE__ */ jsx("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", children: /* @__PURE__ */ jsxs(Link, { id: "login-with-google", className: "grid grid-cols-3", to: data.redirect, "data-testid": "google-login", children: [
-    /* @__PURE__ */ jsx("div", { className: "pt-1", children: /* @__PURE__ */ jsx(FaGoogle, {}) }),
+  const {
+    data
+  } = useLoaderData();
+  return /* @__PURE__ */ jsx("div", { className: "bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow", "data-sentry-component": "Login", "data-sentry-source-file": "login.tsx", children: /* @__PURE__ */ jsxs(Link, { id: "login-with-google", className: "grid grid-cols-3", to: data.redirect, "data-testid": "google-login", "data-sentry-element": "Link", "data-sentry-source-file": "login.tsx", children: [
+    /* @__PURE__ */ jsx("div", { className: "pt-1", children: /* @__PURE__ */ jsx(FaGoogle, { "data-sentry-element": "FaGoogle", "data-sentry-source-file": "login.tsx" }) }),
     /* @__PURE__ */ jsx("div", { className: "text-center", children: "Login with Google" })
   ] }) });
 }
@@ -854,7 +889,7 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-AP_0Up-C.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/index-B82Z1-WW.js", "/assets/components-C1uzTfJy.js", "/assets/performance-mgN0Jf0H.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-BtErLwbF.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/index-B82Z1-WW.js", "/assets/components-C1uzTfJy.js", "/assets/performance-mgN0Jf0H.js", "/assets/iconBase-DRd2S_2U.js", "/assets/habits-CpAXl-tC.js", "/assets/metrics-CZO-FXyB.js", "/assets/index-BztSRQZF.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-D7ogJ1PC.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/metrics-CZO-FXyB.js", "/assets/index-B82Z1-WW.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-AqJ6Zbw0.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-C3zer44L.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/components-C1uzTfJy.js", "/assets/iconBase-DRd2S_2U.js", "/assets/habits-CpAXl-tC.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-Duf5tGaA.js", "imports": ["/assets/jsx-runtime-Dd869mUQ.js", "/assets/iconBase-DRd2S_2U.js", "/assets/index-BztSRQZF.js", "/assets/components-C1uzTfJy.js"], "css": [] } }, "url": "/assets/manifest-e4eb1b2c.js", "version": "e4eb1b2c" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DVbqcXje.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js", "/assets/index-DjoB8s-1.js", "/assets/components-UUdORSDQ.js", "/assets/performance-Bb-AzxbL.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-F-euybzy.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js", "/assets/index-DjoB8s-1.js", "/assets/components-UUdORSDQ.js", "/assets/performance-Bb-AzxbL.js", "/assets/iconBase-pNqM3h5p.js", "/assets/habits-tKhYF_uH.js", "/assets/metrics-DO-2CLz4.js", "/assets/index-aCjqWHo-.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-C1wkXQOw.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js", "/assets/metrics-DO-2CLz4.js", "/assets/index-DjoB8s-1.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-axoun30r.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-DTjRFp_L.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js", "/assets/components-UUdORSDQ.js", "/assets/iconBase-pNqM3h5p.js", "/assets/habits-tKhYF_uH.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-1P1IvJ6x.js", "imports": ["/assets/jsx-runtime-CUOzFbf5.js", "/assets/iconBase-pNqM3h5p.js", "/assets/index-aCjqWHo-.js", "/assets/components-UUdORSDQ.js"], "css": [] } }, "url": "/assets/manifest-0f979977.js", "version": "0f979977" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";

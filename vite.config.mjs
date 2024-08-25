@@ -7,8 +7,11 @@ export default defineConfig({
     remix(),
     sentryVitePlugin({
       org: "daily-habits-ben-coe-test-orga",
-      project: "javascript-react"
-    })
+      project: "javascript-react",
+      reactComponentAnnotation: {
+        enabled: true
+      }
+    }),
   ],
 
   build: {
