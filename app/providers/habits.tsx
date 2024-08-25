@@ -189,7 +189,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loadNote = async () => {
-    const note: string = await fetch('/v1/notes', {
+    const note: string = await fetch('/v1/notes/today', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
