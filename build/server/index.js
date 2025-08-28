@@ -1,20 +1,21 @@
 ;
-!function() {
+{
   try {
-    var e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}, n = new e.Error().stack;
-    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "58114bc1-67d7-4f0a-bb30-ec31a487325b", e._sentryDebugIdIdentifier = "sentry-dbid-58114bc1-67d7-4f0a-bb30-ec31a487325b");
-  } catch (e2) {
+    let e = "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof globalThis ? globalThis : "undefined" != typeof self ? self : {}, n = new e.Error().stack;
+    n && (e._sentryDebugIds = e._sentryDebugIds || {}, e._sentryDebugIds[n] = "a8541ef2-c101-4bec-98cb-a88ed7f62516", e._sentryDebugIdIdentifier = "sentry-dbid-a8541ef2-c101-4bec-98cb-a88ed7f62516");
+  } catch (e) {
   }
-}();
+}
+;
 import { jsx, jsxs } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
 import { createReadableStreamFromReadable, redirect, json } from "@remix-run/node";
 import { RemixServer, useLoaderData, Links, Meta, Link, Outlet, Scripts, useRouteError, Await } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import * as React from "react";
 import React__default, { useState, useEffect, Suspense } from "react";
+import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import "dotenv/config";
 import { createClient } from "redis";
 import RedisStore from "connect-redis";
@@ -138,9 +139,11 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
-const styles = "/assets/shared-BAucGq0X.css";
-var _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-_global.SENTRY_RELEASE = { id: "8ac57efa40ac796e3af326ede6fd3902490e4079" };
+const styles = "/assets/shared-WsFYI6s3.css";
+{
+  let _global = typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : {};
+  _global.SENTRY_RELEASE = { id: "2c983477b8fa3ecfb0160068f4b3d9781b0c5825" };
+}
 const NO_DAYS_SET = {
   Mon: false,
   Tue: false,
@@ -178,8 +181,7 @@ function HabitsProvider({
   const create = async (name, days) => {
     let hasDaysSet = false;
     for (const toggle2 of Object.values(days)) {
-      if (toggle2)
-        hasDaysSet = true;
+      if (toggle2) hasDaysSet = true;
     }
     await fetch("/v1/habits", {
       method: "POST",
@@ -195,8 +197,7 @@ function HabitsProvider({
   const update = async (id, name, days) => {
     let hasDaysSet = false;
     for (const toggle2 of Object.values(days)) {
-      if (toggle2)
-        hasDaysSet = true;
+      if (toggle2) hasDaysSet = true;
     }
     await fetch(`/v1/habits/${id}`, {
       method: "PUT",
@@ -219,11 +220,9 @@ function HabitsProvider({
   };
   const toggle = async (id) => {
     const habit = habits.find((h) => {
-      if (h.id === id)
-        return true;
+      if (h.id === id) return true;
     });
-    if (!habit)
-      return;
+    if (!habit) return;
     await fetch("/v1/habits-daily", {
       method: "POST",
       headers: {
@@ -308,7 +307,7 @@ function HabitsProvider({
     createNote,
     loadNote
   };
-  return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, "data-sentry-element": "unknown", "data-sentry-component": "HabitsProvider", "data-sentry-source-file": "habits.tsx", children });
+  return /* @__PURE__ */ jsx(HabitsContext.Provider, { value, "data-sentry-element": "HabitsContext.Provider", "data-sentry-component": "HabitsProvider", "data-sentry-source-file": "habits.tsx", children });
 }
 function useHabits() {
   return React.useContext(HabitsContext);
@@ -353,10 +352,8 @@ function MetricsProvider({
     await loadNotes();
   };
   const maybeSelectRow = async (date) => {
-    if (date === selectedDate || hasFocus === false)
-      return;
-    else
-      setSelectedDate(date);
+    if (date === selectedDate || hasFocus === false) return;
+    else setSelectedDate(date);
     if (date !== selectedDate) {
       setNotes(notes.map((n) => {
         return {
@@ -368,15 +365,12 @@ function MetricsProvider({
     }
   };
   const gotFocus = async () => {
-    if (hasFocus === true)
-      return;
+    if (hasFocus === true) return;
     setHasFocus(true);
   };
   const lostFocus = async () => {
-    if (hasFocus === false)
-      return;
-    else
-      setHasFocus(false);
+    if (hasFocus === false) return;
+    else setHasFocus(false);
     setSelectedDate("");
     setNotes(notes.map((n) => {
       return {
@@ -395,7 +389,7 @@ function MetricsProvider({
     gotFocus,
     lostFocus
   };
-  return /* @__PURE__ */ jsx(MetricsContext.Provider, { value, "data-sentry-element": "unknown", "data-sentry-component": "MetricsProvider", "data-sentry-source-file": "metrics.tsx", children });
+  return /* @__PURE__ */ jsx(MetricsContext.Provider, { value, "data-sentry-element": "MetricsContext.Provider", "data-sentry-component": "MetricsProvider", "data-sentry-source-file": "metrics.tsx", children });
 }
 function useMetrics() {
   return React.useContext(MetricsContext);
@@ -430,13 +424,10 @@ async function isLoggedIn(req) {
   s(connectReq, {}, () => {
   });
   const sess = await new Promise((resolve) => {
-    if (!connectReq.sessionID)
-      return resolve({});
-    if (!connectReq.sessionStore)
-      return resolve({});
+    if (!connectReq.sessionID) return resolve({});
+    if (!connectReq.sessionStore) return resolve({});
     connectReq.sessionStore.get(connectReq.sessionID, (err, sess2) => {
-      if (err || !sess2)
-        return resolve({});
+      if (err || !sess2) return resolve({});
       return resolve(sess2);
     });
   });
@@ -454,7 +445,14 @@ const links = () => [{
 const loader$3 = async ({
   request
 }) => {
-  const userId = await isLoggedIn(request);
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  const staticRoutes = ["/", "/login"];
+  const needsAuthCheck = !staticRoutes.includes(pathname);
+  let userId = null;
+  if (needsAuthCheck) {
+    userId = await isLoggedIn(request);
+  }
   return json({
     isLoggedIn: !!userId
   });
@@ -463,6 +461,20 @@ function App() {
   const {
     isLoggedIn: isLoggedIn2
   } = useLoaderData();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(isLoggedIn2);
+  const [authChecked, setAuthChecked] = useState(false);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const pathname = url.pathname;
+    const staticRoutes = ["/", "/login"];
+    if (staticRoutes.includes(pathname)) {
+      setAuthChecked(false);
+      setUserIsLoggedIn(false);
+      return;
+    }
+    setAuthChecked(true);
+    setUserIsLoggedIn(isLoggedIn2);
+  }, [isLoggedIn2]);
   return /* @__PURE__ */ jsxs("html", { "data-sentry-component": "App", "data-sentry-source-file": "root.tsx", children: [
     /* @__PURE__ */ jsxs("head", { children: [
       /* @__PURE__ */ jsx("link", { rel: "icon", href: "data:image/x-icon;base64,AA" }),
@@ -475,8 +487,8 @@ function App() {
         /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx(Link, { to: "/", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: /* @__PURE__ */ jsx(FaThList, { className: "ml-8 mt-1 size-5", "data-sentry-element": "FaThList", "data-sentry-source-file": "root.tsx" }) }) }),
         /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/habits", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: "Habits" }) }),
         /* @__PURE__ */ jsx("div", { className: "ml-8", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/metrics", "data-sentry-element": "Link", "data-sentry-source-file": "root.tsx", children: "Metrics" }) }),
-        isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
-        !isLoggedIn2 && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
+        authChecked && userIsLoggedIn && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx("a", { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", href: "/v1/logout", children: "Logout" }) }),
+        (!authChecked || authChecked && !userIsLoggedIn) && /* @__PURE__ */ jsx("div", { className: "text-right w-full", children: /* @__PURE__ */ jsx(Link, { className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", to: "/login", children: "Login" }) })
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "flex w-full", children: [
         /* @__PURE__ */ jsx("div", { className: "lg:w-1/6" }),
@@ -543,8 +555,7 @@ function Metrics() {
   const metrics = useMetrics();
   const [initialLoad, setInitialLoad] = useState(true);
   useEffect(() => {
-    if (!initialLoad)
-      return;
+    if (!initialLoad) return;
     setInitialLoad(false);
     metrics.load();
   }, [metrics]);
@@ -675,8 +686,7 @@ function HabitEdit() {
       let allDaysSet = true;
       if (habits.currentlyEditing.days) {
         for (const toggle of Object.values(habits.currentlyEditing.days)) {
-          if (!toggle)
-            allDaysSet = false;
+          if (!toggle) allDaysSet = false;
         }
       }
       if (!allDaysSet) {
@@ -775,8 +785,7 @@ function Habits() {
     coordinateGetter: sortableKeyboardCoordinates
   }));
   useEffect(() => {
-    if (!initialLoad)
-      return;
+    if (!initialLoad) return;
     habits.load();
     setInitialLoad(false);
   });
@@ -889,7 +898,7 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: Login,
   loader
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-LysYcAUC.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js", "/assets/index--DJmzmf-.js", "/assets/components-BUJZqhlP.js", "/assets/performance-CDg60KMm.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-DBI49ZX9.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js", "/assets/index--DJmzmf-.js", "/assets/components-BUJZqhlP.js", "/assets/performance-CDg60KMm.js", "/assets/iconBase-bgFtuQ2A.js", "/assets/habits-CmoKLWiL.js", "/assets/metrics-De1MHAsf.js", "/assets/index-2ABQ2QqJ.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-Bfl5ckxR.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js", "/assets/metrics-De1MHAsf.js", "/assets/index--DJmzmf-.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-DFEJadP_.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-CLbBgZ9b.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js", "/assets/components-BUJZqhlP.js", "/assets/iconBase-bgFtuQ2A.js", "/assets/habits-CmoKLWiL.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-uUbawP_X.js", "imports": ["/assets/jsx-runtime-Df60mlRM.js", "/assets/iconBase-bgFtuQ2A.js", "/assets/index-2ABQ2QqJ.js", "/assets/components-BUJZqhlP.js"], "css": [] } }, "url": "/assets/manifest-0b8ead19.js", "version": "0b8ead19" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DTWdu2jX.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js", "/assets/components-4iru7Ml4.js", "/assets/performance-Bc-50VtA.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": true, "module": "/assets/root-CTTE_iQk.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js", "/assets/components-4iru7Ml4.js", "/assets/performance-Bc-50VtA.js", "/assets/iconBase-DwOstQYv.js", "/assets/habits-CTBOzOPS.js", "/assets/metrics-B6e4HRIQ.js", "/assets/index-DD1FvFeL.js"], "css": [] }, "routes/metrics": { "id": "routes/metrics", "parentId": "root", "path": "metrics", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/metrics-DAgm_1E1.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js", "/assets/metrics-B6e4HRIQ.js"], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-BN32J7mB.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js"], "css": [] }, "routes/habits": { "id": "routes/habits", "parentId": "root", "path": "habits", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/habits-b49d96V9.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js", "/assets/components-4iru7Ml4.js", "/assets/iconBase-DwOstQYv.js", "/assets/habits-CTBOzOPS.js"], "css": [] }, "routes/login": { "id": "routes/login", "parentId": "root", "path": "login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/login-bVe_D8vW.js", "imports": ["/assets/jsx-runtime-D5eDQ0ed.js", "/assets/iconBase-DwOstQYv.js", "/assets/index-DD1FvFeL.js", "/assets/components-4iru7Ml4.js"], "css": [] } }, "url": "/assets/manifest-e24d45d6.js", "version": "e24d45d6" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
