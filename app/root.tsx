@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { withSentry, captureRemixErrorBoundaryError } from "@sentry/remix";
 import {
   Link,
@@ -25,12 +25,45 @@ type LoggedInData = {
 }
 
 export const loader = async ({request}) => {
-  const userId = await isLoggedIn(request);
-  return json<LoggedInData>({ isLoggedIn: !!userId });
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  
+  // Skip authentication check for static routes that don't need it
+  const staticRoutes = ['/', '/login'];
+  const needsAuthCheck = !staticRoutes.includes(pathname);
+  
+  let userId = null;
+  if (needsAuthCheck) {
+    userId = await isLoggedIn(request);
+  }
+  
+  return json<LoggedInData>({ 
+    isLoggedIn: !!userId 
+  });
 };
 
 function App() {
   const { isLoggedIn } = useLoaderData<typeof loader>();
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(isLoggedIn);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const pathname = url.pathname;
+    
+    // Skip auth check for static routes
+    const staticRoutes = ['/', '/login'];
+    if (staticRoutes.includes(pathname)) {
+      setAuthChecked(false);
+      setUserIsLoggedIn(false);
+      return;
+    }
+    
+    // For authenticated routes, use the server-side auth state
+    setAuthChecked(true);
+    setUserIsLoggedIn(isLoggedIn);
+  }, [isLoggedIn]);
+
   return (
     <html>
       <head>
@@ -56,12 +89,12 @@ function App() {
             <div className='ml-8'>
               <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
             </div>
-            {isLoggedIn &&
+            {authChecked && userIsLoggedIn &&
               <div className={'text-right w-full'}>
                 <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
               </div>
             }
-            {!isLoggedIn &&
+            {(!authChecked || (authChecked && !userIsLoggedIn)) &&
               <div className={'text-right w-full'}>
                 <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
               </div>
