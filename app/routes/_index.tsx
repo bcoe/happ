@@ -7,7 +7,7 @@ export default function Index () {
       <div className={'lg:w-2/3 sm:full-width'}>
         <img 
           src={screen} 
-          width={1200} 
+          width={551} 
           height={800} 
           alt="HabitTrack.me application screenshot"
           className="w-full h-auto"
