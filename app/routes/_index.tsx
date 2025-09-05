@@ -8,7 +8,7 @@ export default function Index () {
         <img 
           src={screen} 
           width={551} 
-          height={800} 
+          height={486} 
           alt="HabitTrack.me application screenshot"
           className="w-full h-auto"
         />
