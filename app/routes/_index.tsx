@@ -10,7 +10,6 @@ export default function Index () {
           width={551} 
           height={486} 
           alt="HabitTrack.me application screenshot"
-          className="w-full h-auto"
         />
       </div>
       <div className={'mt-10 lg:w-1/3 sm:full-width m-8 lg:m-1'}>
