@@ -5,7 +5,7 @@ export default function Index () {
   return (
     <div className={'lg:flex'}>
       <div className={'lg:w-2/3 sm:full-width'}>
-        <img src={screen} />
+        <img src={screen} width="1920" height="1080" className="w-full h-auto" />
       </div>
       <div className={'mt-10 lg:w-1/3 sm:full-width m-8 lg:m-1'}>
         <blockquote className="text-xl italic font-semibold text-gray-900 dark:text-white">
