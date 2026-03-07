@@ -23,6 +23,7 @@ module.exports = {
   },
   rules: {
     'import/extensions': 'off',
+    'import/no-unresolved': ['error', { ignore: ['^vitest/'] }],
   },
   ignorePatterns: ['build/', 'vite.config.mjs'],
 };
