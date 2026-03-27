@@ -1,20 +1,21 @@
 import React from 'react'
-import screen from "../images/screen-01.png";
+import { Link } from "@remix-run/react";
 
 export default function Index () {
   return (
-    <div className={'lg:flex'}>
-      <div className={'lg:w-2/3 sm:full-width'}>
-        <img src={screen} />
-      </div>
-      <div className={'mt-10 lg:w-1/3 sm:full-width m-8 lg:m-1'}>
-        <blockquote className="text-xl italic font-semibold text-gray-900 dark:text-white">
-            <svg className="w-8 h-8 text-gray-400 dark:text-gray-600 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 14">
-                <path d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z"/>
-            </svg>
-            <p className={'text-gray-400'}>HabitTrack.me lets you track daily habits that you'd like to make a part of your routine. Its metrics allow you to see if you're meeting your goals week over week.</p>
-        </blockquote>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+      <h1 className="text-4xl font-semibold text-zinc-100 tracking-tight mb-4">
+        Build habits that stick.
+      </h1>
+      <p className="text-zinc-400 text-base max-w-md mb-8 leading-relaxed">
+        Track your daily habits, visualise your consistency, and reflect on your progress — all in one minimal interface.
+      </p>
+      <Link
+        to="/login"
+        className="inline-flex items-center px-4 py-2 rounded-md bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium transition-colors"
+      >
+        Get started
+      </Link>
     </div>
   )
 }

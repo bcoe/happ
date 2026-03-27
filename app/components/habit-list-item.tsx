@@ -34,23 +34,38 @@ export function HabitListItem(props) {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
-    hideRow() ? '' : (
+    hideRow() ? null : (
       <div ref={setNodeRef} style={style} {...attributes}>
-        <div className='flex w-full bg-white text-gray-800 py-2 px-4 border border-gray-400 rounded shadow habit-item disable-touch' >
-          <div {...listeners} className="w-8 mr-2">
-            {props.disabled ? '' : <RxDragHandleHorizontal className="mt-1 size-6" />}
+        <div
+          {...listeners}
+          className={`flex items-center w-full bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-md px-3 py-2.5 mb-1.5 transition-colors disable-touch ${props.disabled ? '' : 'cursor-grab active:cursor-grabbing'}`}
+        >
+          <div className="mr-2 text-zinc-700">
+            {props.disabled ? null : <RxDragHandleHorizontal className="size-4" />}
           </div>
-          <div className='w-5/6 mt-0.5'>
+          <div className="flex-1 text-sm text-zinc-200">
             {props.name}
           </div>
-          <div className='w-1/6 text-right'>
-            <div className="flex w-full">
-              <div className='w-2/4' />
-              <div className='w-2/4'>
-                {props.disabled ? <input type="checkbox" name={`habit-${props.id}`} checked={props.status} onChange={handleChange} className={'w-4 h-4 mt-2'} /> : <FiEdit className='mt-1 size-6'  onClick={handleEdit} />}
-              </div>
-            </div>
+          <div className="ml-3">
+            {props.disabled
+              ? (
+                <input
+                  type="checkbox"
+                  name={`habit-${props.id}`}
+                  checked={props.status}
+                  onChange={handleChange}
+                  className="w-4 h-4 accent-violet-500 cursor-pointer"
+                />
+              )
+              : (
+                <FiEdit
+                  className="size-3.5 text-zinc-600 hover:text-zinc-300 cursor-pointer transition-colors"
+                  onClick={handleEdit}
+                />
+              )
+            }
           </div>
         </div>
       </div>

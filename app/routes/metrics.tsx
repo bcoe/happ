@@ -15,41 +15,48 @@ export default function Metrics () {
   useEffect(() => {
     if (!initialLoad) return;
     setInitialLoad(false);
-    metrics.load(); 
+    metrics.load();
   }, [metrics]);
 
   return (
-    <div className={'bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow'}>
-      <h2 className={'text-center'}>Habit completion by day</h2>
-      <div className={'m-4 h-56'}>
-        <HabitAreaChart data={metrics.metrics.daily} />
+    <div className="space-y-6">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-5">
+        <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-4">
+          Completion over time
+        </h2>
+        <div className="h-48">
+          <HabitAreaChart data={metrics.metrics.daily} />
+        </div>
       </div>
-      <div className="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg mb-5">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  <tr>
-                      <th scope="col" className="px-6 py-3">
-                          Date
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Note
-                      </th>
-                  </tr>
-              </thead>
-              <tbody>
+
+      {metrics.notes.length > 0 && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+          <div className="px-5 py-3 border-b border-zinc-800">
+            <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+              Notes
+            </h2>
+          </div>
+          <table className="w-full text-sm">
+            <tbody>
               {metrics.notes.map((note, i) => (
-                <tr key={i} className={`${note.highlight ? 'bg-gray-100' : 'bg-white'} border-b`}>
-                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {note.date}
-                    </th>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {note.note}
-                    </td>
+                <tr
+                  key={i}
+                  className={`border-b border-zinc-800 last:border-0 transition-colors ${
+                    note.highlight ? 'bg-zinc-800' : ''
+                  }`}
+                >
+                  <td className="px-5 py-3 text-zinc-500 whitespace-nowrap w-32">
+                    {note.date}
+                  </td>
+                  <td className="px-5 py-3 text-zinc-300">
+                    {note.note}
+                  </td>
                 </tr>
               ))}
-              </tbody>
+            </tbody>
           </table>
-      </div>
+        </div>
+      )}
     </div>
   )
 }
