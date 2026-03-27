@@ -14,9 +14,11 @@ import styles from "./styles/shared.css?url";
 import {HabitsProvider} from './providers/habits';
 import {MetricsProvider} from './providers/metrics';
 import { isLoggedIn } from "./session.server";
-import { FaThList } from "react-icons/fa";
 
 export const links: LinksFunction = () => [
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+  { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" },
   { rel: "stylesheet", href: styles },
 ];
 
@@ -27,18 +29,17 @@ type LoggedInData = {
 export const loader = async ({request}) => {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  
-  // Skip authentication check for static routes that don't need it
+
   const staticRoutes = ['/', '/login'];
   const needsAuthCheck = !staticRoutes.includes(pathname);
-  
+
   let userId = null;
   if (needsAuthCheck) {
     userId = await isLoggedIn(request);
   }
-  
-  return json<LoggedInData>({ 
-    isLoggedIn: !!userId 
+
+  return json<LoggedInData>({
+    isLoggedIn: !!userId
   });
 };
 
@@ -50,16 +51,14 @@ function App() {
   useEffect(() => {
     const url = new URL(window.location.href);
     const pathname = url.pathname;
-    
-    // Skip auth check for static routes
+
     const staticRoutes = ['/', '/login'];
     if (staticRoutes.includes(pathname)) {
       setAuthChecked(false);
       setUserIsLoggedIn(false);
       return;
     }
-    
-    // For authenticated routes, use the server-side auth state
+
     setAuthChecked(true);
     setUserIsLoggedIn(isLoggedIn);
   }, [isLoggedIn]);
@@ -67,50 +66,42 @@ function App() {
   return (
     <html>
       <head>
-        <link
-          rel="icon"
-          href="data:image/x-icon;base64,AA"
-        />
+        <link rel="icon" href="data:image/x-icon;base64,AA" />
         <Links />
         <Meta />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body>
-        <div className={'header'}>
-          <div className="flex">
-            <div>
-              <Link to="/">
-                <FaThList className={'ml-8 mt-1 size-5'} />
+      <body className="font-sans">
+        <nav className="h-11 flex items-center px-6 border-b border-zinc-800 bg-zinc-950">
+          <Link to="/" className="text-sm font-semibold text-zinc-100 tracking-tight mr-8">
+            happ
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors" to="/habits">
+              Habits
+            </Link>
+            <Link className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors" to="/metrics">
+              Metrics
+            </Link>
+          </div>
+          <div className="ml-auto">
+            {authChecked && userIsLoggedIn ? (
+              <a className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors" href="/v1/logout">
+                Logout
+              </a>
+            ) : (
+              <Link className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors" to="/login">
+                Login
               </Link>
-            </div>
-            <div className='ml-8'>
-              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/habits">Habits</Link>
-            </div>
-            <div className='ml-8'>
-              <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/metrics">Metrics</Link>
-            </div>
-            {authChecked && userIsLoggedIn &&
-              <div className={'text-right w-full'}>
-                <a className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} href="/v1/logout">Logout</a>
-              </div>
-            }
-            {(!authChecked || (authChecked && !userIsLoggedIn)) &&
-              <div className={'text-right w-full'}>
-                <Link className={'font-medium text-blue-600 dark:text-blue-500 hover:underline'} to="/login">Login</Link>
-              </div>
-            }
+            )}
           </div>
-        </div>
-        <div className='flex w-full'>
-          <div className='lg:w-1/6' />
-          <div className={'w-full lg:w-4/6'}>
-            <HabitsProvider>
-              <MetricsProvider>
-                {<Outlet />}
-              </MetricsProvider>
-            </HabitsProvider>
-          </div>
-          <div className='lg:w-1/6' />
+        </nav>
+        <div className="max-w-2xl mx-auto px-6 py-8">
+          <HabitsProvider>
+            <MetricsProvider>
+              <Outlet />
+            </MetricsProvider>
+          </HabitsProvider>
         </div>
         <Scripts />
       </body>

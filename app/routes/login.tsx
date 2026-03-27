@@ -34,15 +34,20 @@ export const loader = async () => {
 export default function Login () {
   const {data} = useLoaderData<RedirectData>();
   return (
-    <div className={'bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow'}>
-      <Link id="login-with-google" className={'grid grid-cols-3'} to={data.redirect} data-testid="google-login">
-        <div className={'pt-1'}>
-          <FaGoogle />
-        </div>
-        <div className={'text-center'}>
-          Login with Google
-        </div>
-      </Link>
+    <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="w-full max-w-sm">
+        <h1 className="text-xl font-semibold text-zinc-100 text-center mb-1">Sign in to happ</h1>
+        <p className="text-zinc-500 text-sm text-center mb-8">Track your daily habits</p>
+        <Link
+          id="login-with-google"
+          to={data.redirect}
+          data-testid="google-login"
+          className="flex items-center justify-center gap-3 w-full px-4 py-2.5 rounded-md border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-sm font-medium transition-colors"
+        >
+          <FaGoogle className="text-zinc-400 size-4" />
+          Continue with Google
+        </Link>
+      </div>
     </div>
   )
 }

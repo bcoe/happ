@@ -22,7 +22,7 @@ export function HabitEdit() {
     habits.setEditing(false, undefined);
   }
 
-  async function save(e) { 
+  async function save(e) {
     e.preventDefault();
     await habits.update(id, name, days);
     await habits.load();
@@ -50,7 +50,6 @@ export function HabitEdit() {
   }
 
   useEffect(() => {
-    // 'esc' should close the form, return should save it:
     if (habits.editing) {
       document.addEventListener('keydown', handleKeyPress);
     } else {
@@ -61,7 +60,6 @@ export function HabitEdit() {
       setId(habits.currentlyEditing.id);
       setName(habits.currentlyEditing.name);
       let allDaysSet = true;
-      // Handle the case where the days is null:
       if (habits.currentlyEditing.days) {
         for (const toggle of Object.values(habits.currentlyEditing.days)) {
           if (!toggle) allDaysSet = false;
@@ -73,46 +71,76 @@ export function HabitEdit() {
         setDays({...NO_DAYS_SET});
       }
     }
-  },[habits.editing]);
+  }, [habits.editing]);
 
   return (
-    <div className={`relative z-10${habits.editing ? ' visible' : ' invisible'}`} aria-labelledby="modal-title" role="dialog" aria-modal="true">
-      <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-      <form onSubmit={save} className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-baseline justify-center p-4 text-center sm:items-baseline sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-                  </svg>
-                </div>
-                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                  <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">Edit habit</h3>
-                  <div className="mt-2">
-                    <input autoComplete={'off'} name="name" type="text" className='block w-96 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' value={name} onChange={e => setName(e.target.value)} />
-                    <ul className="grid w-full grid-cols-2 gap-2 mt-5">
-                      {Object.keys(days).map(day => (
-                        <li key={day}>
-                          <span data-day={day} onClick={toggleDay} className={`inline-flex items-center justify-center w-full p-2 text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
-                            {DAY_LOOKUP[day]}
-                          </span>
-                        </li>
-                      ))}
-                  </ul>
-                  </div>
-                </div>
+    <div
+      className={`relative z-10 ${habits.editing ? 'visible' : 'invisible'}`}
+      aria-labelledby="modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+      <form onSubmit={save} className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div className="relative w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl">
+            <div className="px-5 py-4 border-b border-zinc-800">
+              <h3 className="text-sm font-medium text-zinc-100" id="modal-title">
+                Edit habit
+              </h3>
+            </div>
+
+            <div className="px-5 py-4 space-y-4">
+              <input
+                autoComplete="off"
+                name="name"
+                type="text"
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-violet-500 transition-colors"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+              <div className="grid grid-cols-2 gap-1.5">
+                {Object.keys(days).map(day => (
+                  <button
+                    type="button"
+                    key={day}
+                    data-day={day}
+                    onClick={toggleDay}
+                    className={`py-1.5 text-xs font-medium rounded transition-colors ${
+                      days[day]
+                        ? 'bg-violet-600 text-white'
+                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+                    }`}
+                  >
+                    {DAY_LOOKUP[day]}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="flex bg-gray-50 px-4 py-3 px-6">
-              <div className="w-full">
-                <button type="submit" className="mr-1 bg-blue-500 hover:bg-blue-700 mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto text-white">Save</button>
-                <button type="button" onClick={cancel} className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+
+            <div className="px-5 py-3 border-t border-zinc-800 flex items-center justify-between">
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={cancel}
+                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium rounded transition-colors"
+                >
+                  Cancel
+                </button>
               </div>
-              <div className="w-full text-right">
-                <button type="button" onClick={del} className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto sm:mt-0 sm-ml-0 ml-2 mt-3">Delete</button>
-              </div>
+              <button
+                type="button"
+                onClick={del}
+                className="px-3 py-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 text-xs font-medium rounded transition-colors"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

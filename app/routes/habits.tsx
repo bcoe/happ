@@ -59,16 +59,12 @@ export default function Habits() {
     setInitialLoad(false);
   });
 
-  // If all habits are deleted, switch to
-  // sort / edit mode:
   useEffect(() => {
     if (habits.empty) {
       setSorting(true);
     }
   }, [habits.empty]);
-  
-  // When we toggle into sort / edit mode
-  // reset the day selectors.
+
   useEffect(() => {
     if (sorting) {
       setDays({...NO_DAYS_SET});
@@ -109,7 +105,7 @@ export default function Habits() {
       await habits.load();
     }
   }
-  
+
   function toggleDay(e) {
     const toggledDay = !days[e.target.dataset.day];
     setDays(prevDays => {
@@ -120,60 +116,95 @@ export default function Habits() {
 
   return (
     <Suspense>
-        <Await resolve={habits}>
-          <HabitEdit />
-          <div className={'p-2'}>
-            <div className={'flex items-center justify-center'}>
-              <h1 className="text-1xl font-extrabold mb-1">{(sorting || habits.empty) ? 'Add / edit habits' : date}</h1>
-            </div>
-          </div>
-          {habits.empty ? (
-              <div className={'border-dashed border-2 border-slate-100 grid p-10'}>
-                <div className={'flex items-center justify-center'}>
-                  <p>
-                    You have not yet created your first daily habit. Enter a daily habit that you would
-                    like to start keeping into the text box below and click
-                    <span className={'text-xs	bg-blue-500 ml-2 text-white font-bold py-1 px-2 rounded whitespace-nowrap'}>Add Habit</span>
-                  </p>
-                </div>
-              </div>
-          ) : ''}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={habits.habits}
-              strategy={verticalListSortingStrategy}
-            >
-              {habits.habits.map(habit => <HabitListItem name={habit.name} key={habit.habit_id} id={habit.habit_id} status={habit.status} days={habit.days} disabled={!sorting} />)}
-            </SortableContext>
-          </DndContext>
-          {(sorting || habits.empty) ? (
-            <form onSubmit={createDailyHabit}>
-              <div className='flex w-full'>
-                <div className='w-4/6 mt-1'>
-                  <input autoComplete={'off'} name="name" type="text" className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline' />
-                </div>
-                <input type="submit" value="Add Habit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 mt-1 rounded focus:outline-none focus:shadow-outline w-2/6' />
-              </div>
-              <ul className='flex w-full'>
-                {Object.keys(days).map((day, i) => (
-                  <li data-day={day} key={day} onClick={toggleDay} className={`p-1 ${i === 0 ? '' : 'ml-1'} text-sm font-medium text-center border rounded-lg cursor-pointer text-blue-600 border-blue-600${days[day] ? ' text-white bg-blue-500' : ' bg-white'}`}>
-                    {DAY_LOOKUP[day]}
-                  </li>
-                ))}
-              </ul>
-            </form>
-          ) : ''}
-          <label className="mt-3 inline-flex items-center cursor-pointer">
-            <input type="checkbox" name="toggle-edit" value="" className="sr-only peer" checked={sorting || habits.empty} onChange={handleChange} />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            <span className="ms-3 text-base font-medium text-gray-900">Add / edit habits</span>
+      <Await resolve={habits}>
+        <HabitEdit />
+
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-sm font-medium text-zinc-400">
+            {(sorting || habits.empty) ? 'Add / edit habits' : date}
+          </h1>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <span className="text-xs text-zinc-500">Edit</span>
+            <input
+              type="checkbox"
+              name="toggle-edit"
+              value=""
+              className="sr-only peer"
+              checked={sorting || habits.empty}
+              onChange={handleChange}
+            />
+            <div className="relative w-9 h-5 bg-zinc-700 rounded-full peer-checked:bg-violet-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full transition-colors" />
           </label>
-          {(sorting || habits.empty) ? '' : <CommentBox />}
-        </Await>
+        </div>
+
+        {habits.empty && (
+          <div className="border border-dashed border-zinc-800 rounded-lg p-8 text-center mb-4">
+            <p className="text-zinc-500 text-sm">
+              No habits yet. Add your first one below.
+            </p>
+          </div>
+        )}
+
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={habits.habits}
+            strategy={verticalListSortingStrategy}
+          >
+            {habits.habits.map(habit => (
+              <HabitListItem
+                name={habit.name}
+                key={habit.habit_id}
+                id={habit.habit_id}
+                status={habit.status}
+                days={habit.days}
+                disabled={!sorting}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+
+        {(sorting || habits.empty) && (
+          <form onSubmit={createDailyHabit} className="mt-4">
+            <div className="flex gap-2 mb-3">
+              <input
+                autoComplete="off"
+                name="name"
+                type="text"
+                placeholder="Habit name"
+                className="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+              />
+              <input
+                type="submit"
+                value="Add"
+                className="bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium px-4 py-2 rounded-md cursor-pointer transition-colors"
+              />
+            </div>
+            <div className="flex gap-1.5">
+              {Object.keys(days).map((day, i) => (
+                <button
+                  type="button"
+                  data-day={day}
+                  key={day}
+                  onClick={toggleDay}
+                  className={`flex-1 py-1 text-xs font-medium rounded transition-colors ${
+                    days[day]
+                      ? 'bg-violet-600 text-white'
+                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+                  }`}
+                >
+                  {DAY_LOOKUP[day]}
+                </button>
+              ))}
+            </div>
+          </form>
+        )}
+
+        {!(sorting || habits.empty) && <CommentBox />}
+      </Await>
     </Suspense>
   )
 }
